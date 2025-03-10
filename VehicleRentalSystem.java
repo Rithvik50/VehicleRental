@@ -7,17 +7,17 @@ public class VehicleRentalSystem {
         rentalSystem.addUser(user1);
         rentalSystem.addUser(user2);
 
-        Car car1 = new Car("DL01AB1234", FuelType.PETROL, 1500.0, "2023-05-15", 
-                        TransmissionType.AUTOMATIC, Car.CarType.SEDAN, 4);
+        Car car1 = new Car("DL01AB1234", FuelType.PETROL, TransmissionType.AUTOMATIC, 1500.0, "2023-05-15", 
+                        Car.CarType.SEDAN, 4);
         
-        Car car2 = new Car("MH02CD5678", FuelType.DIESEL, 2000.0, "2023-05-10", 
-                        TransmissionType.MANUAL, Car.CarType.SUV, 6);
+        Car car2 = new Car("MH02CD5678", FuelType.DIESEL, TransmissionType.MANUAL, 2000.0, "2023-05-10", 
+                        Car.CarType.SUV, 6);
         
-        Motorcycle bike1 = new Motorcycle("KA03EF9012", FuelType.PETROL, 800.0, "2023-05-20", 
-                                       150, 140.5);
+        Bike bike1 = new Bike("KA03EF9012", FuelType.PETROL, TransmissionType.MANUAL, 800.0, "2023-05-20", 
+                                       150, 140.5, Bike.BikeType.RACING);
         
-        Motorcycle bike2 = new Motorcycle("TN04GH3456", FuelType.ELECTRIC, 1000.0, "2023-05-05", 
-                                       250, 160.0);
+        Bike bike2 = new Bike("TN04GH3456", FuelType.ELECTRIC, TransmissionType.MANUAL, 1000.0, "2023-05-05", 
+                                       250, 160.0, Bike.BikeType.CITY);
         
         rentalSystem.addVehicle(car1);
         rentalSystem.addVehicle(car2);

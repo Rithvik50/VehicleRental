@@ -1,15 +1,16 @@
 public class Truck extends Vehicle {
     enum TruckType {
-        RACING, CRUISER, CITY
+        FLATBED, HEAVY_DUTY, LIGHT_DUTY, BOX
     }
 
     private TruckType truckType;
     private int numberOfAxles;
 
     public Truck(String regnNumber, FuelType fuelType, TransmissionType transmissionType, double perDayRent, String rentalDate,
-                      int engineDisplacement, double weight, TruckType truckType) {
+                 int numberOfAxles, TruckType truckType) {
         super(regnNumber, fuelType, transmissionType, perDayRent, rentalDate);
         this.truckType = truckType;
+        this.numberOfAxles = numberOfAxles;
     }
 
     @Override

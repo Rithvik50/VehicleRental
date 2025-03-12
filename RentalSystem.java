@@ -1,6 +1,8 @@
 import java.util.ArrayList;
 import java.util.List;
 
+import vehicles.Vehicle;
+
 public class RentalSystem {
     private List<User> users;
     private List<Vehicle> availableVehicles;

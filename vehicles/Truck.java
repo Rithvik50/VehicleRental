@@ -1,3 +1,4 @@
+package vehicles;
 public class Truck extends Vehicle {
     enum TruckType {
         FLATBED, HEAVY_DUTY, LIGHT_DUTY, BOX

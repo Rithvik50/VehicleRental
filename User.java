@@ -2,6 +2,8 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+import vehicles.Vehicle;
+
 public class User {
     private String userId;
     private String name;

@@ -1,4 +1,3 @@
-package vehicles;
 public abstract class Vehicle implements VehicleInfo, Comparable<Vehicle> {
     private String regnNumber;
     private FuelType fuelType;

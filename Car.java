@@ -1,4 +1,3 @@
-package vehicles;
 public class Car extends Vehicle {
     enum CarType {
         HATCHBACK, SEDAN, SUV

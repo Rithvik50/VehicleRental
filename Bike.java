@@ -1,4 +1,3 @@
-package vehicles;
 public class Bike extends Vehicle {
     enum BikeType {
         RACING, CRUISER, CITY

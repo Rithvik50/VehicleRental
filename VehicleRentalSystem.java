@@ -1,5 +1,3 @@
-import javax.swing.*;
-
 public class VehicleRentalSystem {
 	public enum STATE {
 		LOGIN, RENTAL, VEHICLE, PAYMENT;
@@ -12,6 +10,6 @@ public class VehicleRentalSystem {
     }
 
     public static void main(String[] args) {
-        SwingUtilities.invokeLater(VehicleRentalSystem::new);
+        new VehicleRentalSystem();
     }
 }

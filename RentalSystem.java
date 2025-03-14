@@ -1,5 +1,6 @@
 import java.util.ArrayList;
 import java.util.List;
+import java.awt.*;
 
 public class RentalSystem {
     private List<User> users;
@@ -68,5 +69,13 @@ public class RentalSystem {
                 vehicle.displayDetails();
             }
         }
+    }
+
+    public void render(Graphics g) {
+        g.fillRect(200, 100, 200, 50);
+        g.fillRect(200, 200, 200, 50);
+        g.setColor(Color.BLACK);
+        g.drawString("Select Vehicles", 250, 130);
+        g.drawString("Pay", 290, 230);
     }
 }

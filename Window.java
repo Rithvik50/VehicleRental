@@ -68,7 +68,6 @@ public class Window {
 
             g.setColor(Color.WHITE);
             if (VehicleRentalSystem.state == VehicleRentalSystem.STATE.LOGIN) {
-                login = new Login();
                 login.render(g);
             } else if (VehicleRentalSystem.state == VehicleRentalSystem.STATE.RENTAL) {
                 rs.render(g);

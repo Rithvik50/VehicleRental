@@ -66,7 +66,7 @@ public class Window extends JPanel implements ActionListener {
     public void setState(VehicleRentalSystem.STATE newState) {
         this.removeMouseListener(login);
         this.removeMouseListener(rs);
-        
+
         VehicleRentalSystem.state = newState;
         
         if (newState == VehicleRentalSystem.STATE.LOGIN) {
@@ -77,20 +77,4 @@ public class Window extends JPanel implements ActionListener {
     
         repaint();
     }
-    
-
-    // private void handleMouseClick(int x, int y) {
-    //     if (VehicleRentalSystem.state == VehicleRentalSystem.STATE.RENTAL) {
-    //         if (x >= 200 && x <= 400 && y >= 100 && y <= 150) {
-    //             currentScreen = "SelectVehicles";
-    //         } else if (x >= 200 && x <= 400 && y >= 200 && y <= 250) {
-    //             currentScreen = "Pay";
-    //         }
-    //     } else {
-    //         if (x >= 50 && x <= 150 && y >= 300 && y <= 350) {
-    //             currentScreen = "Menu";
-    //         }
-    //     }
-    //     gradientPanel.repaint();
-    // }
 }

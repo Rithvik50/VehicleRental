@@ -1,8 +1,10 @@
 import java.util.ArrayList;
 import java.util.List;
 import java.awt.*;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 
-public class RentalSystem {
+public class RentalSystem extends MouseAdapter {
     private List<User> users;
     private List<Vehicle> availableVehicles;
 
@@ -67,6 +69,22 @@ public class RentalSystem {
         } else {
             for (Vehicle vehicle : availableVehicles) {
                 vehicle.displayDetails();
+            }
+        }
+    }
+
+    @Override
+    public void mouseClicked(MouseEvent e) {
+        int mX = e.getX();
+        int mY = e.getY();
+
+        if (VehicleRentalSystem.state == VehicleRentalSystem.STATE.RENTAL) {
+            if (mX >= 600 && mX <= 800 && mY >= 100 && mY <= 150) {
+                System.out.println("Select Vehicles clicked");
+                Window window = (Window) e.getComponent();
+                window.setState(VehicleRentalSystem.STATE.LOGIN);
+            } else if (mX >= 600 && mX <= 800 && mY >= 200 && mY <= 250) {
+                VehicleRentalSystem.state = VehicleRentalSystem.STATE.RENTAL;
             }
         }
     }

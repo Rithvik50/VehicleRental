@@ -2,8 +2,6 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
 
 public class Window extends JPanel implements ActionListener {
     private JFrame frame;
@@ -21,6 +19,9 @@ public class Window extends JPanel implements ActionListener {
 
         login = new Login();
         rs = new RentalSystem();
+
+        this.addMouseListener(login);
+        this.addMouseListener(rs);
 
         timer = new Timer(50, this);
         timer.start();
@@ -61,6 +62,22 @@ public class Window extends JPanel implements ActionListener {
         angle += 0.05;
         repaint();
     }
+
+    public void setState(VehicleRentalSystem.STATE newState) {
+        this.removeMouseListener(login);
+        this.removeMouseListener(rs);
+        
+        VehicleRentalSystem.state = newState;
+        
+        if (newState == VehicleRentalSystem.STATE.LOGIN) {
+            this.addMouseListener(login);
+        } else if (newState == VehicleRentalSystem.STATE.RENTAL) {
+            this.addMouseListener(rs);
+        }
+    
+        repaint();
+    }
+    
 
     // private void handleMouseClick(int x, int y) {
     //     if (VehicleRentalSystem.state == VehicleRentalSystem.STATE.RENTAL) {

@@ -1,12 +1,12 @@
 public class VehicleRentalSystem {
-	public enum STATE {
+	enum STATE {
 		LOGIN, RENTAL, VEHICLE, PAYMENT;
 	}
 
-    public static STATE state = STATE.LOGIN;
+    public static STATE state;
     
     public VehicleRentalSystem() {
-        new Window();
+        new Window().setState(STATE.LOGIN);
     }
 
     public static void main(String[] args) {

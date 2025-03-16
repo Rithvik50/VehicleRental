@@ -81,11 +81,11 @@ public class RentalSystem {
         int loginX = 600 + (200 - loginTextWidth) / 2;
         int loginY = 100 + (50 + fm.getAscent()) / 2;
         g.setColor(Color.BLACK);
-        g.drawString("Login", loginX, loginY);
+        g.drawString("Select Vehicles", loginX, loginY);
 
         int registerTextWidth = fm.stringWidth("Pay");
         int registerX = 600 + (200 - registerTextWidth) / 2;
         int registerY = 200 + (50 + fm.getAscent()) / 2;
-        g.drawString("Register", registerX, registerY);
+        g.drawString("Pay", registerX, registerY);
     }
 }

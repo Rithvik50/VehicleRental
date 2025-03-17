@@ -23,6 +23,10 @@ public class Window extends JPanel implements ActionListener {
         this.addMouseListener(login);
         this.addMouseListener(rs);
 
+        this.setFocusable(true);
+        this.requestFocus();
+        this.setOpaque(false);
+
         timer = new Timer(50, this);
         timer.start();
         
@@ -75,6 +79,7 @@ public class Window extends JPanel implements ActionListener {
             this.addMouseListener(rs);
         }
     
+        revalidate();
         repaint();
     }
 }

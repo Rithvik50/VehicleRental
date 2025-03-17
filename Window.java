@@ -78,8 +78,7 @@ public class Window extends JPanel implements ActionListener {
         } else if (newState == VehicleRentalSystem.STATE.RENTAL) {
             this.addMouseListener(rs);
         }
-    
-        revalidate();
+        
         repaint();
     }
 }

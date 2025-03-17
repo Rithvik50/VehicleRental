@@ -90,13 +90,9 @@ public class RentalSystem extends MouseAdapter {
                 if (source instanceof Window) {
                     Window window = (Window) source;
                     window.setState(VehicleRentalSystem.STATE.LOGIN);
-                    window.revalidate();  // Ensure UI updates properly
-                    window.repaint();
                 }
             } else if (mX >= 600 && mX <= 800 && mY >= 200 && mY <= 250) {
-                System.out.println("Register clicked");
-
-                VehicleRentalSystem.state = VehicleRentalSystem.STATE.RENTAL;
+                System.out.println("Pay clicked");
             }
         }
     }

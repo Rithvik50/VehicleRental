@@ -3,10 +3,10 @@ public class VehicleRentalSystem {
 		LOGIN, RENTAL, VEHICLE, PAYMENT;
 	}
 
-    public static STATE state;
+    public static STATE state = STATE.LOGIN;
     
     public VehicleRentalSystem() {
-        new Window().setState(STATE.LOGIN);
+        new Window();
     }
 
     public static void main(String[] args) {

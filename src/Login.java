@@ -9,7 +9,7 @@ public class Login extends MouseAdapter {
     enum LOGIN_PAGES {
         MENU_PAGE, LOGIN_PAGE, REGISTER_PAGE
     }
-
+    
     private LOGIN_PAGES pages;
 
     public Login() {

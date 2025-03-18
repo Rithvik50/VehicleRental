@@ -4,7 +4,7 @@ import java.awt.event.MouseEvent;
 
 public class Login extends MouseAdapter {
     private User activeUser;
-    private boolean loggedIn = true;
+    private boolean loggedIn = false;
 
     enum LOGIN_PAGES {
         MENU_PAGE, LOGIN_PAGE, REGISTER_PAGE

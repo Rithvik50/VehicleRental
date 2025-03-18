@@ -1,15 +1,15 @@
-public class VehicleRentalSystem {
+public class App {
 	enum STATE {
 		LOGIN, RENTAL, VEHICLE, PAYMENT;
 	}
 
     public static STATE state = STATE.LOGIN;
     
-    public VehicleRentalSystem() {
+    public App() {
         new Window();
     }
 
     public static void main(String[] args) {
-        new VehicleRentalSystem();
+        new App();
     }
 }

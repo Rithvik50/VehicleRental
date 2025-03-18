@@ -53,9 +53,9 @@ public class Window extends JPanel implements ActionListener {
         g2d.setPaint(gp);
         g2d.fillRect(0, 0, width, height);
 
-        if (VehicleRentalSystem.state == VehicleRentalSystem.STATE.LOGIN) {
+        if (App.state == App.STATE.LOGIN) {
             login.render(g);
-        } else if (VehicleRentalSystem.state == VehicleRentalSystem.STATE.RENTAL) {  
+        } else if (App.state == App.STATE.RENTAL) {  
             rs.render(g);
         }
     }

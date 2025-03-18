@@ -21,11 +21,11 @@ public class Login extends MouseAdapter {
         int mX = e.getX();
         int mY = e.getY();
 
-        if (VehicleRentalSystem.state == VehicleRentalSystem.STATE.LOGIN) {
+        if (App.state == App.STATE.LOGIN) {
             if (pages == LOGIN_PAGES.MENU_PAGE) {
                 if (mX >= 600 && mX <= 800 && mY >= 300 && mY <= 350) {
                     if (loggedIn) {
-                        VehicleRentalSystem.state = VehicleRentalSystem.STATE.RENTAL;
+                        App.state = App.STATE.RENTAL;
                     } else {
                         pages = LOGIN_PAGES.LOGIN_PAGE;
                     }

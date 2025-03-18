@@ -78,9 +78,9 @@ public class RentalSystem extends MouseAdapter {
         int mX = e.getX();
         int mY = e.getY();
 
-        if (VehicleRentalSystem.state == VehicleRentalSystem.STATE.RENTAL) {
+        if (App.state == App.STATE.RENTAL) {
             if (mX >= 600 && mX <= 800 && mY >= 100 && mY <= 150) {
-                VehicleRentalSystem.state = VehicleRentalSystem.STATE.LOGIN;
+                App.state = App.STATE.LOGIN;
             } else if (mX >= 600 && mX <= 800 && mY >= 200 && mY <= 250) {
                 System.out.println("Pay clicked");
             }

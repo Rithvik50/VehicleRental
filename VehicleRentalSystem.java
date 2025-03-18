@@ -3,7 +3,7 @@ public class VehicleRentalSystem {
 		LOGIN, RENTAL, VEHICLE, PAYMENT;
 	}
 
-    public static STATE state = STATE.LOGIN;
+    public static STATE state = STATE.RENTAL;
     
     public VehicleRentalSystem() {
         new Window();

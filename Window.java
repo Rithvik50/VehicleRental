@@ -53,7 +53,6 @@ public class Window extends JPanel implements ActionListener {
         g2d.setPaint(gp);
         g2d.fillRect(0, 0, width, height);
 
-        g.setColor(Color.WHITE);
         if (VehicleRentalSystem.state == VehicleRentalSystem.STATE.LOGIN) {
             login.render(g);
         } else if (VehicleRentalSystem.state == VehicleRentalSystem.STATE.RENTAL) {  
@@ -64,21 +63,6 @@ public class Window extends JPanel implements ActionListener {
     @Override
     public void actionPerformed(ActionEvent e) {
         angle += 0.05;
-        repaint();
-    }
-
-    public void setState(VehicleRentalSystem.STATE newState) {
-        this.removeMouseListener(login);
-        this.removeMouseListener(rs);
-
-        VehicleRentalSystem.state = newState;
-        
-        if (newState == VehicleRentalSystem.STATE.LOGIN) {
-            this.addMouseListener(login);
-        } else if (newState == VehicleRentalSystem.STATE.RENTAL) {
-            this.addMouseListener(rs);
-        }
-        
         repaint();
     }
 }

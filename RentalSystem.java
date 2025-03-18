@@ -80,17 +80,7 @@ public class RentalSystem extends MouseAdapter {
 
         if (VehicleRentalSystem.state == VehicleRentalSystem.STATE.RENTAL) {
             if (mX >= 600 && mX <= 800 && mY >= 100 && mY <= 150) {
-                System.out.println("Selected Vehicles clicked");
-
-                Component source = e.getComponent();
-                while (!(source instanceof Window) && source != null) {
-                    source = source.getParent();
-                }
-
-                if (source instanceof Window) {
-                    Window window = (Window) source;
-                    window.setState(VehicleRentalSystem.STATE.LOGIN);
-                }
+                VehicleRentalSystem.state = VehicleRentalSystem.STATE.LOGIN;
             } else if (mX >= 600 && mX <= 800 && mY >= 200 && mY <= 250) {
                 System.out.println("Pay clicked");
             }
@@ -98,6 +88,7 @@ public class RentalSystem extends MouseAdapter {
     }
 
     public void render(Graphics g) {
+        g.setColor(Color.WHITE);
         g.fillRect(600, 100, 200, 50);
         g.fillRect(600, 200, 200, 50);
 

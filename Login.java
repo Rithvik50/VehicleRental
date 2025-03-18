@@ -3,7 +3,8 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 
 public class Login extends MouseAdapter {
-    private boolean loggedIn;
+    private User activeUser;
+    private boolean loggedIn = true;
 
     enum LOGIN_PAGES {
         MENU_PAGE, LOGIN_PAGE, REGISTER_PAGE
@@ -21,44 +22,23 @@ public class Login extends MouseAdapter {
         int mY = e.getY();
 
         if (VehicleRentalSystem.state == VehicleRentalSystem.STATE.LOGIN) {
-            Component source = e.getComponent();
-            while (!(source instanceof Window) && source != null) {
-                source = source.getParent();
-            }
-
             if (pages == LOGIN_PAGES.MENU_PAGE) {
                 if (mX >= 600 && mX <= 800 && mY >= 300 && mY <= 350) {
-                    pages = LOGIN_PAGES.LOGIN_PAGE;
-    
-                    if (source instanceof Window) {
-                        Window window = (Window) source;
-                        window.repaint();
+                    if (loggedIn) {
+                        VehicleRentalSystem.state = VehicleRentalSystem.STATE.RENTAL;
+                    } else {
+                        pages = LOGIN_PAGES.LOGIN_PAGE;
                     }
                 } else if (mX >= 600 && mX <= 800 && mY >= 400 && mY <= 450) {
                     pages = LOGIN_PAGES.REGISTER_PAGE;
-
-                    if (source instanceof Window) {
-                        Window window = (Window) source;
-                        window.repaint();
-                    }
                 }
             } else if (pages == LOGIN_PAGES.LOGIN_PAGE) {
                 if (mX >= 600 && mX <= 800 && mY >= 300 && mY <= 350) {
                     pages = LOGIN_PAGES.MENU_PAGE;
-    
-                    if (source instanceof Window) {
-                        Window window = (Window) source;
-                        window.repaint();
-                    }
                 }
             } else if (pages == LOGIN_PAGES.REGISTER_PAGE) {
                 if (mX >= 600 && mX <= 800 && mY >= 300 && mY <= 350) {
                     pages = LOGIN_PAGES.MENU_PAGE;
-    
-                    if (source instanceof Window) {
-                        Window window = (Window) source;
-                        window.repaint();
-                    }
                 }
             }
         }
@@ -66,39 +46,55 @@ public class Login extends MouseAdapter {
 
     public void render(Graphics g) {
         FontMetrics fm = g.getFontMetrics();
+        int textWidth;
+        int textX;
+        int textY;
+
+        g.setColor(Color.WHITE);
         if (pages == LOGIN_PAGES.MENU_PAGE) {
             g.fillRect(600, 300, 200, 50);
             g.fillRect(600, 400, 200, 50);
+            if (loggedIn) {
+                textWidth = fm.stringWidth("Enter");
+                textX = 600 + (200 - textWidth) / 2;
+                textY = 300 + (50 + fm.getAscent()) / 2;
+                g.setColor(Color.BLACK);
+                g.drawString("Enter", textX, textY);
 
-            int loginTextWidth = fm.stringWidth("Login");
-            int loginX = 600 + (200 - loginTextWidth) / 2;
-            int loginY = 300 + (50 + fm.getAscent()) / 2;
-            g.setColor(Color.BLACK);
-            g.drawString("Login", loginX, loginY);
+                textWidth = fm.stringWidth("Log Off");
+                textX = 600 + (200 - textWidth) / 2;
+                textY = 400 + (50 + fm.getAscent()) / 2;
+                g.drawString("Log Off", textX, textY);
+            } else {
+                textWidth = fm.stringWidth("Login");
+                textX = 600 + (200 - textWidth) / 2;
+                textY = 300 + (50 + fm.getAscent()) / 2;
+                g.setColor(Color.BLACK);
+                g.drawString("Login", textX, textY);
 
-            int registerTextWidth = fm.stringWidth("Register");
-            int registerX = 600 + (200 - registerTextWidth) / 2;
-            int registerY = 400 + (50 + fm.getAscent()) / 2;
-            g.drawString("Register", registerX, registerY);
+                textWidth = fm.stringWidth("Register");
+                textX = 600 + (200 - textWidth) / 2;
+                textY = 400 + (50 + fm.getAscent()) / 2;
+                g.drawString("Register", textX, textY);
+            }
         } else if (pages == LOGIN_PAGES.LOGIN_PAGE) {
             g.fillRect(600, 300, 200, 50);
 
-            int loginTextWidth = fm.stringWidth("Back");
-            int loginX = 600 + (200 - loginTextWidth) / 2;
-            int loginY = 300 + (50 + fm.getAscent()) / 2;
+            textWidth = fm.stringWidth("Back");
+            textX = 600 + (200 - textWidth) / 2;
+            textY = 300 + (50 + fm.getAscent()) / 2;
 
             g.setColor(Color.BLACK);
-            g.drawString("Back", loginX, loginY);
+            g.drawString("Back", textX, textY);
         } else if (pages == LOGIN_PAGES.REGISTER_PAGE) {
             g.fillRect(600, 300, 200, 50);
 
-            int loginTextWidth = fm.stringWidth("Back");
-            int loginX = 600 + (200 - loginTextWidth) / 2;
-            int loginY = 300 + (50 + fm.getAscent()) / 2;
+            textWidth = fm.stringWidth("Create");
+            textX = 600 + (200 - textWidth) / 2;
+            textY = 300 + (50 + fm.getAscent()) / 2;
 
             g.setColor(Color.BLACK);
-            g.drawString("Back", loginX, loginY);
-            g.drawString("On Rental Page", 500, 100);
+            g.drawString("Create", textX, textY);
         } 
     }
 }

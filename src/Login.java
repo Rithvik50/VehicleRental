@@ -49,33 +49,40 @@ public class Login extends MouseAdapter {
     private void handleLogin() {
         activeUser = usernameField.getText();
         activePassword = new String(passwordField.getPassword());
-
+    
         if (userDatabase.containsKey(activeUser) && userDatabase.get(activeUser).equals(activePassword)) {
             loggedIn = true;
+            JOptionPane.showMessageDialog(frame, "Login successful!", "Success", JOptionPane.INFORMATION_MESSAGE);
             pages = LOGIN_PAGES.MENU_PAGE;
+            clearFields();
         } else {
             JOptionPane.showMessageDialog(frame, "Invalid username or password!", "Login Failed", JOptionPane.ERROR_MESSAGE);
+            usernameField.setText("");
+            passwordField.setText("");
         }
-
-        clearFields();
+    
         frame.repaint();
     }
+    
 
     private void handleRegister() {
         String newUser = usernameField.getText();
         String newPass = new String(passwordField.getPassword());
-
+    
         if (userDatabase.containsKey(newUser)) {
             JOptionPane.showMessageDialog(frame, "Username already exists!", "Registration Failed", JOptionPane.ERROR_MESSAGE);
+            usernameField.setText("");
+            passwordField.setText("");
         } else {
             userDatabase.put(newUser, newPass);
             JOptionPane.showMessageDialog(frame, "Registration successful!", "Success", JOptionPane.INFORMATION_MESSAGE);
             pages = LOGIN_PAGES.MENU_PAGE;
+            clearFields();
         }
-
-        clearFields();
+    
         frame.repaint();
     }
+    
 
     private void handleLogOff() {
         loggedIn = false;

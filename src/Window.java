@@ -17,7 +17,7 @@ public class Window extends JPanel implements ActionListener {
 		Toolkit.getDefaultToolkit().getScreenSize().height);
         frame.setResizable(false);
 
-        login = new Login();
+        login = new Login(frame);
         rs = new RentalSystem();
 
         this.addMouseListener(login);

@@ -156,6 +156,10 @@ public class Login extends MouseAdapter {
         frame.repaint();
     }
 
+    public User getActiveUser() {
+        return loggedIn ? new User(activeUser, "") : null;
+    }
+
     @Override
     public void mouseClicked(MouseEvent e) {
         int mX = e.getX();

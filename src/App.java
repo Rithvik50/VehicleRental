@@ -1,5 +1,3 @@
-import java.sql.*;
-
 public class App {
 	enum STATE {
 		LOGIN, RENTAL, VEHICLE, PAYMENT;

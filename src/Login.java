@@ -205,6 +205,12 @@ public class Login extends MouseAdapter {
         if (pages == LOGIN_PAGES.MENU_PAGE) {
             g.fillRect(600, 300, 200, 50);
             g.fillRect(600, 400, 200, 50);
+            g.setColor(Color.WHITE);
+            Font font = new Font("Arial", Font.BOLD, 30);
+            g.setFont(font);
+            g.drawString("Vehicle Rental System", 535, 200);
+            g.setColor(Color.BLACK);
+            g.setFont(fm.getFont());
             if (loggedIn) {
                 textWidth = fm.stringWidth("Enter");
                 textX = 600 + (200 - textWidth) / 2;

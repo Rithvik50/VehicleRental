@@ -137,7 +137,7 @@ public class Login extends MouseAdapter {
         return Base64.getEncoder().encodeToString(salt);
     }
 
-    /** Hashes the password using SHA-256 with salt */
+    // Hashes the password using SHA-256 with salt
     private String hashPassword(String password, String salt) {
         try {
             MessageDigest digest = MessageDigest.getInstance("SHA-256");

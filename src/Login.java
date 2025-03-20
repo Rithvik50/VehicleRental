@@ -156,16 +156,20 @@ public class Login extends MouseAdapter {
         frame.repaint();
     }
 
+    public static User getActiveUser() {
+        return activeUser;
+    }
+
     @Override
     public void mouseClicked(MouseEvent e) {
         int mX = e.getX();
         int mY = e.getY();
 
-        if (App.state == App.STATE.LOGIN) {
+        if (App.getState() == App.STATE.LOGIN) {
             if (pages == LOGIN_PAGES.MENU_PAGE) {
                 if (mX >= 600 && mX <= 800 && mY >= 300 && mY <= 350) {
                     if (loggedIn) {
-                        App.state = App.STATE.RENTAL;
+                        App.setState(App.STATE.RENTAL);
                     } else {
                         pages = LOGIN_PAGES.LOGIN_PAGE;
                         usernameField.setVisible(true);
@@ -193,9 +197,7 @@ public class Login extends MouseAdapter {
 
     public void render(Graphics g) {
         FontMetrics fm = g.getFontMetrics();
-        int textWidth;
-        int textX;
-        int textY;
+        int textWidth, textX, textY;
 
         g.setColor(Color.WHITE);
         if (pages == LOGIN_PAGES.MENU_PAGE) {

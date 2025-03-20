@@ -78,10 +78,10 @@ public class RentalSystem extends MouseAdapter {
         int mX = e.getX();
         int mY = e.getY();
 
-        if (App.state == App.STATE.RENTAL) {
-            if (mX >= 600 && mX <= 800 && mY >= 100 && mY <= 150) {
-                App.state = App.STATE.LOGIN;
-            } else if (mX >= 600 && mX <= 800 && mY >= 200 && mY <= 250) {
+        if (App.getState() == App.STATE.RENTAL) {
+            if (mX >= 600 && mX <= 800 && mY >= 300 && mY <= 350) {
+                App.setState(App.STATE.LOGIN);
+            } else if (mX >= 600 && mX <= 800 && mY >= 400 && mY <= 450) {
                 System.out.println("Pay clicked");
             }
         }
@@ -89,20 +89,28 @@ public class RentalSystem extends MouseAdapter {
 
     public void render(Graphics g) {
         g.setColor(Color.WHITE);
-        g.fillRect(600, 100, 200, 50);
-        g.fillRect(600, 200, 200, 50);
-
+        g.fillRect(600, 300, 200, 50);
         FontMetrics fm = g.getFontMetrics();
+        int textWidth, textX, textY;
+        if (Login.getActiveUser().isAdmin()) {
+            textWidth = fm.stringWidth("Add Vehicle");
+            textX = 600 + (200 - textWidth) / 2;
+            textY = 300 + (50 + fm.getAscent()) / 2;
+            g.setColor(Color.BLACK);
+            g.drawString("Add Vehicle", textX, textY);
+        } else {
+            g.fillRect(600, 400, 200, 50);
 
-        int loginTextWidth = fm.stringWidth("Select Vehicles");
-        int loginX = 600 + (200 - loginTextWidth) / 2;
-        int loginY = 100 + (50 + fm.getAscent()) / 2;
-        g.setColor(Color.BLACK);
-        g.drawString("Select Vehicles", loginX, loginY);
+            textWidth = fm.stringWidth("Select Vehicles");
+            textX = 600 + (200 - textWidth) / 2;
+            textY = 300 + (50 + fm.getAscent()) / 2;
+            g.setColor(Color.BLACK);
+            g.drawString("Select Vehicles", textX, textY);
 
-        int registerTextWidth = fm.stringWidth("Pay");
-        int registerX = 600 + (200 - registerTextWidth) / 2;
-        int registerY = 200 + (50 + fm.getAscent()) / 2;
-        g.drawString("Pay", registerX, registerY);
+            textWidth = fm.stringWidth("Pay");
+            textX = 600 + (200 - textWidth) / 2;
+            textY = 400 + (50 + fm.getAscent()) / 2;
+            g.drawString("Pay", textX, textY);
+        }
     }
 }

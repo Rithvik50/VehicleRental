@@ -5,11 +5,11 @@ import java.util.List;
 public class User {
     private String userId;
     private List<Vehicle> rentedVehicles;
-    private boolean isAdmin = false;
+    private boolean admin = false;
 
-    public User(String userId, boolean isAdmin) {
+    public User(String userId, boolean admin) {
         this.userId = userId;
-        this.isAdmin = isAdmin;
+        this.admin = admin;
         this.rentedVehicles = new ArrayList<>();
     }
 
@@ -19,6 +19,10 @@ public class User {
 
     public void setUserId(String userId) {
         this.userId = userId;
+    }
+
+    public boolean isAdmin() {
+        return admin;
     }
 
     public void rentVehicle(Vehicle vehicle) {

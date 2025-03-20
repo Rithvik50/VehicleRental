@@ -53,9 +53,13 @@ public class Window extends JPanel implements ActionListener {
         g2d.setPaint(gp);
         g2d.fillRect(0, 0, width, height);
 
-        if (App.state == App.STATE.LOGIN) {
+        if (App.getState() == App.STATE.LOGIN) {
+            this.addMouseListener(login);
+            this.removeMouseListener(rs);
             login.render(g);
-        } else if (App.state == App.STATE.RENTAL) {  
+        } else if (App.getState() == App.STATE.RENTAL) {
+            this.addMouseListener(rs);
+            this.removeMouseListener(login);
             rs.render(g);
         }
     }

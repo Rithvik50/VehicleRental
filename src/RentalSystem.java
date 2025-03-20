@@ -29,7 +29,7 @@ public class RentalSystem extends MouseAdapter {
             user.rentVehicle(vehicle);
             availableVehicles.remove(vehicle);
             System.out.println("Vehicle with registration number " + regnNumber + 
-                               " rented successfully to " + user.getName());
+                               " rented successfully to ");
         } else {
             System.out.println("Rental failed. User or vehicle not found.");
         }

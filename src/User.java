@@ -4,12 +4,12 @@ import java.util.List;
 
 public class User {
     private String userId;
-    private String name;
     private List<Vehicle> rentedVehicles;
+    private boolean isAdmin = false;
 
-    public User(String userId, String name) {
+    public User(String userId, boolean isAdmin) {
         this.userId = userId;
-        this.name = name;
+        this.isAdmin = isAdmin;
         this.rentedVehicles = new ArrayList<>();
     }
 
@@ -17,8 +17,8 @@ public class User {
         return userId;
     }
 
-    public String getName() {
-        return name;
+    public void setUserId(String userId) {
+        this.userId = userId;
     }
 
     public void rentVehicle(Vehicle vehicle) {
@@ -31,7 +31,7 @@ public class User {
     }
 
     public void displayRentedVehicles() {
-        System.out.println("Vehicles rented by " + name + " (sorted by rental date):");
+        System.out.println("Vehicles rented by (sorted by rental date):");
         List<Vehicle> sortedVehicles = getRentedVehicles();
         if (sortedVehicles.isEmpty()) {
             System.out.println("No vehicles rented.");

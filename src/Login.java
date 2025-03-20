@@ -8,7 +8,7 @@ import java.sql.*;
 import java.util.Base64;
 
 public class Login extends MouseAdapter {
-    private String activeUser;
+    private static User activeUser;
     private boolean loggedIn = false;
 
     private JTextField usernameField;
@@ -54,7 +54,7 @@ public class Login extends MouseAdapter {
         String password = new String(passwordField.getPassword());
     
         try (Connection conn = DriverManager.getConnection(DB_URL, DB_USER, DB_PASSWORD)) {
-            String query = "SELECT hash, salt FROM Users WHERE username = ?";
+            String query = "SELECT hash, salt, admin FROM Users WHERE username = ?";
             try (PreparedStatement stmt = conn.prepareStatement(query)) {
                 stmt.setString(1, username);
                 ResultSet rs = stmt.executeQuery();
@@ -66,7 +66,7 @@ public class Login extends MouseAdapter {
                     String computedHash = hashPassword(password, storedSalt);
                     if (computedHash.equals(storedHash)) {
                         loggedIn = true;
-                        activeUser = username;
+                        activeUser = new User(username, rs.getBoolean("admin"));
                         JOptionPane.showMessageDialog(frame, "Login successful! Welcome, " + username + "!", "Success", JOptionPane.INFORMATION_MESSAGE);
                         pages = LOGIN_PAGES.MENU_PAGE;
     
@@ -154,10 +154,6 @@ public class Login extends MouseAdapter {
         pages = LOGIN_PAGES.MENU_PAGE;
         JOptionPane.showMessageDialog(frame, "You have been logged off.", "Log Off", JOptionPane.INFORMATION_MESSAGE);
         frame.repaint();
-    }
-
-    public User getActiveUser() {
-        return loggedIn ? new User(activeUser, "") : null;
     }
 
     @Override

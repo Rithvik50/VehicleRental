@@ -4,12 +4,12 @@ import java.awt.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 
-public class RentalSystem extends MouseAdapter {
+public class Rental extends MouseAdapter {
     private List<User> users;
     private List<Vehicle> availableVehicles;
     private Window window;
 
-    public RentalSystem(Window window) {
+    public Rental(Window window) {
         users = new ArrayList<>();
         availableVehicles = new ArrayList<>();
         this.window = window;
@@ -81,13 +81,8 @@ public class RentalSystem extends MouseAdapter {
         int mY = e.getY();
 
         if (mX >= 600 && mX <= 800 && mY >= 300 && mY <= 350) {
-            if (Login.getActiveUser().isAdmin()) {
-                window.handleMouseListeners(App.STATE.VEHICLE);
-                App.setState(App.STATE.VEHICLE);
-            } else {
-                window.handleMouseListeners(App.STATE.LOGIN);
-                App.setState(App.STATE.LOGIN);
-            }
+            window.handleMouseListeners(App.STATE.VEHICLE);
+            App.setState(App.STATE.VEHICLE);
         } else if (mX >= 600 && mX <= 800 && mY >= 400 && mY <= 450) {
             window.handleMouseListeners(App.STATE.PAYMENT);
             App.setState(App.STATE.PAYMENT);

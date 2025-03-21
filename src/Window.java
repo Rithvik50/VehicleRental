@@ -21,7 +21,6 @@ public class Window extends JPanel implements ActionListener {
         rs = new RentalSystem(this);
 
         this.addMouseListener(login);
-        this.addMouseListener(rs);
 
         this.setFocusable(true);
         this.requestFocus();

@@ -5,6 +5,10 @@ import java.awt.event.MouseEvent;
 public class VehicleHandler extends MouseAdapter {
     private Window window;
 
+    enum VEHICLE_PAGES {
+        SELECT_PAGE, ADD_PAGE
+    }
+
     public VehicleHandler(Window window) {
         this.window = window;
     }

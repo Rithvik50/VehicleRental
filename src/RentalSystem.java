@@ -7,10 +7,12 @@ import java.awt.event.MouseEvent;
 public class RentalSystem extends MouseAdapter {
     private List<User> users;
     private List<Vehicle> availableVehicles;
+    private Window window;
 
-    public RentalSystem() {
+    public RentalSystem(Window window) {
         users = new ArrayList<>();
         availableVehicles = new ArrayList<>();
+        this.window = window;
     }
 
     public void addUser(User user) {
@@ -80,6 +82,7 @@ public class RentalSystem extends MouseAdapter {
 
         if (App.getState() == App.STATE.RENTAL) {
             if (mX >= 600 && mX <= 800 && mY >= 300 && mY <= 350) {
+                window.handleMouseListeners(App.STATE.LOGIN);
                 App.setState(App.STATE.LOGIN);
             } else if (mX >= 600 && mX <= 800 && mY >= 400 && mY <= 450) {
                 System.out.println("Pay clicked");

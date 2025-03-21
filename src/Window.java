@@ -17,8 +17,8 @@ public class Window extends JPanel implements ActionListener {
 		Toolkit.getDefaultToolkit().getScreenSize().height);
         frame.setResizable(false);
 
-        login = new Login(frame);
-        rs = new RentalSystem();
+        login = new Login(frame, this);
+        rs = new RentalSystem(this);
 
         this.addMouseListener(login);
         this.addMouseListener(rs);
@@ -32,6 +32,16 @@ public class Window extends JPanel implements ActionListener {
         
         frame.add(this);
         frame.setVisible(true);
+    }
+
+    public void handleMouseListeners(App.STATE state) {
+        if (state == App.STATE.LOGIN) {
+            this.addMouseListener(login);
+            this.removeMouseListener(rs);
+        } else if (state == App.STATE.RENTAL) {
+            this.addMouseListener(rs);
+            this.removeMouseListener(login);
+        }
     }
 
     @Override
@@ -54,12 +64,8 @@ public class Window extends JPanel implements ActionListener {
         g2d.fillRect(0, 0, width, height);
 
         if (App.getState() == App.STATE.LOGIN) {
-            this.addMouseListener(login);
-            this.removeMouseListener(rs);
             login.render(g);
         } else if (App.getState() == App.STATE.RENTAL) {
-            this.addMouseListener(rs);
-            this.removeMouseListener(login);
             rs.render(g);
         }
     }

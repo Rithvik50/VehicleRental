@@ -15,6 +15,8 @@ public class Login extends MouseAdapter {
     private JPasswordField passwordField;
     private JFrame frame;
 
+    private Window window;
+
     private final String DB_URL = "jdbc:mysql://localhost:3306/VehicleRentalSystem";
     private final String DB_USER = "root";
     private final String DB_PASSWORD = "Thealamo13";
@@ -25,8 +27,10 @@ public class Login extends MouseAdapter {
 
     private LOGIN_PAGES pages;
 
-    public Login(JFrame frame) {
+    public Login(JFrame frame, Window window) {
         this.frame = frame;
+        this.window = window;
+
         pages = LOGIN_PAGES.MENU_PAGE;
 
         usernameField = new JTextField(15);
@@ -169,6 +173,7 @@ public class Login extends MouseAdapter {
             if (pages == LOGIN_PAGES.MENU_PAGE) {
                 if (mX >= 600 && mX <= 800 && mY >= 300 && mY <= 350) {
                     if (loggedIn) {
+                        window.handleMouseListeners(App.STATE.RENTAL);
                         App.setState(App.STATE.RENTAL);
                     } else {
                         pages = LOGIN_PAGES.LOGIN_PAGE;

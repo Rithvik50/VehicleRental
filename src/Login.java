@@ -169,34 +169,33 @@ public class Login extends MouseAdapter {
         int mX = e.getX();
         int mY = e.getY();
 
-        if (App.getState() == App.STATE.LOGIN) {
-            if (pages == LOGIN_PAGES.MENU_PAGE) {
-                if (mX >= 600 && mX <= 800 && mY >= 300 && mY <= 350) {
-                    if (loggedIn) {
-                        window.handleMouseListeners(App.STATE.RENTAL);
-                        App.setState(App.STATE.RENTAL);
-                    } else {
-                        pages = LOGIN_PAGES.LOGIN_PAGE;
-                        usernameField.setVisible(true);
-                        passwordField.setVisible(true);
-                    }
-                } else if (mX >= 600 && mX <= 800 && mY >= 400 && mY <= 450) {
-                    if (loggedIn) {
-                        handleLogOff();
-                    } else {
-                        pages = LOGIN_PAGES.REGISTER_PAGE;
-                        usernameField.setVisible(true);
-                        passwordField.setVisible(true);
-                    }
+        if (pages == LOGIN_PAGES.MENU_PAGE) {
+            if (mX >= 600 && mX <= 800 && mY >= 300 && mY <= 350) {
+                if (loggedIn) {
+                    window.handleMouseListeners(App.STATE.RENTAL);
+                    App.setState(App.STATE.RENTAL);
+                } else {
+                    pages = LOGIN_PAGES.LOGIN_PAGE;
+                    usernameField.setVisible(true);
+                    passwordField.setVisible(true);
                 }
-            } else if (pages == LOGIN_PAGES.LOGIN_PAGE || pages == LOGIN_PAGES.REGISTER_PAGE) {
-                if (mX >= 600 && mX <= 800 && mY >= 400 && mY <= 450) {
-                    pages = LOGIN_PAGES.MENU_PAGE;
-                    usernameField.setVisible(false);
-                    passwordField.setVisible(false);
+            } else if (mX >= 600 && mX <= 800 && mY >= 400 && mY <= 450) {
+                if (loggedIn) {
+                    handleLogOff();
+                } else {
+                    pages = LOGIN_PAGES.REGISTER_PAGE;
+                    usernameField.setVisible(true);
+                    passwordField.setVisible(true);
                 }
             }
+        } else if (pages == LOGIN_PAGES.LOGIN_PAGE || pages == LOGIN_PAGES.REGISTER_PAGE) {
+            if (mX >= 600 && mX <= 800 && mY >= 400 && mY <= 450) {
+                pages = LOGIN_PAGES.MENU_PAGE;
+                usernameField.setVisible(false);
+                passwordField.setVisible(false);
+            }
         }
+        
         frame.repaint();
     }
 

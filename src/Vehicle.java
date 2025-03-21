@@ -1,4 +1,4 @@
-public abstract class Vehicle implements VehicleInfo, Comparable<Vehicle> {
+public abstract class Vehicle implements Comparable<Vehicle> {
     private String regnNumber;
     private FuelType fuelType;
     private double perDayRent;
@@ -13,12 +13,10 @@ public abstract class Vehicle implements VehicleInfo, Comparable<Vehicle> {
         this.rentalDate = rentalDate;
     }
 
-    @Override
     public String getRegnNumber() {
         return regnNumber;
     }
 
-    @Override
     public String getRentalDate() {
         return rentalDate;
     }

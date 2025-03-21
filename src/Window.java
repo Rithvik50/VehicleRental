@@ -7,6 +7,7 @@ public class Window extends JPanel implements ActionListener {
     private JFrame frame;
     private Login login;
     private RentalSystem rs;
+    private Payment payment;
     private double angle = 0;
     private Timer timer;
     
@@ -19,6 +20,7 @@ public class Window extends JPanel implements ActionListener {
 
         login = new Login(frame, this);
         rs = new RentalSystem(this);
+        payment = new Payment(this);
 
         this.addMouseListener(login);
 
@@ -37,9 +39,17 @@ public class Window extends JPanel implements ActionListener {
         if (state == App.STATE.LOGIN) {
             this.addMouseListener(login);
             this.removeMouseListener(rs);
+            this.removeMouseListener(payment);
         } else if (state == App.STATE.RENTAL) {
             this.addMouseListener(rs);
             this.removeMouseListener(login);
+            this.removeMouseListener(payment);
+        } else if (state == App.STATE.VEHICLE) {
+
+        } else if (state == App.STATE.PAYMENT) {
+            this.addMouseListener(payment);
+            this.removeMouseListener(login);
+            this.removeMouseListener(rs);
         }
     }
 
@@ -66,6 +76,10 @@ public class Window extends JPanel implements ActionListener {
             login.render(g);
         } else if (App.getState() == App.STATE.RENTAL) {
             rs.render(g);
+        } else if (App.getState() == App.STATE.VEHICLE) {
+
+        } else if (App.getState() == App.STATE.PAYMENT) {
+            payment.render(g);
         }
     }
         

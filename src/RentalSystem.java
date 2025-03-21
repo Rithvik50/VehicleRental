@@ -80,13 +80,17 @@ public class RentalSystem extends MouseAdapter {
         int mX = e.getX();
         int mY = e.getY();
 
-        if (App.getState() == App.STATE.RENTAL) {
-            if (mX >= 600 && mX <= 800 && mY >= 300 && mY <= 350) {
+        if (mX >= 600 && mX <= 800 && mY >= 300 && mY <= 350) {
+            if (Login.getActiveUser().isAdmin()) {
+                window.handleMouseListeners(App.STATE.VEHICLE);
+                App.setState(App.STATE.VEHICLE);
+            } else {
                 window.handleMouseListeners(App.STATE.LOGIN);
                 App.setState(App.STATE.LOGIN);
-            } else if (mX >= 600 && mX <= 800 && mY >= 400 && mY <= 450) {
-                System.out.println("Pay clicked");
             }
+        } else if (mX >= 600 && mX <= 800 && mY >= 400 && mY <= 450) {
+            window.handleMouseListeners(App.STATE.PAYMENT);
+            App.setState(App.STATE.PAYMENT);
         }
     }
 

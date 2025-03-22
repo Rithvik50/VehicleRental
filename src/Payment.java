@@ -23,5 +23,12 @@ public class Payment extends MouseAdapter {
     public void render(Graphics g) {
         g.setColor(Color.WHITE);
         g.fillRect(600, 300, 200, 50);
+        FontMetrics fm = g.getFontMetrics();
+        int textWidth, textX, textY;
+        textWidth = fm.stringWidth("Pay");
+        textX = 600 + (200 - textWidth) / 2;
+        textY = 300 + (50 + fm.getAscent()) / 2;
+        g.setColor(Color.BLACK);
+        g.drawString("Pay", textX, textY);
     }
 }

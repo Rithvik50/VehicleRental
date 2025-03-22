@@ -109,10 +109,10 @@ public class Rental extends MouseAdapter {
             g.setColor(Color.BLACK);
             g.drawString("Select Vehicles", textX, textY);
 
-            textWidth = fm.stringWidth("Pay");
+            textWidth = fm.stringWidth("Payment");
             textX = 600 + (200 - textWidth) / 2;
             textY = 400 + (50 + fm.getAscent()) / 2;
-            g.drawString("Pay", textX, textY);
+            g.drawString("Payment", textX, textY);
         }
     }
 }

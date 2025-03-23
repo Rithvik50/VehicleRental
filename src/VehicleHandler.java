@@ -1,14 +1,15 @@
 import java.awt.*;
 import java.awt.event.*;
-
-import javax.swing.JComboBox;
-import javax.swing.JFrame;
+import java.util.ArrayList;
+import javax.swing.*;
 
 public class VehicleHandler extends MouseAdapter {
     private Window window;
     private JFrame frame;
     private Vehicle vehicle;
-    private String vehicleType, regnNumber, fuelType, transmissionType;
+    private String vehicleType, fuelType, transmissionType;
+    private List specialDetails;
+    private JComboBox<String> v, f, t;
 
     enum VEHICLE_PAGES {
         SELECT_PAGE, ADD_PAGE
@@ -19,6 +20,10 @@ public class VehicleHandler extends MouseAdapter {
     public VehicleHandler(JFrame frame, Window window) {
         this.frame = frame;
         this.window = window;
+        specialDetails = new List();
+
+        JPanel panel = new JPanel();
+        panel.setLayout(new GridLayout(2, 1, 10, 10)); // 2 rows, 1 column, with spacing
 
         if (Login.getActiveUser() != null && Login.getActiveUser().isAdmin()) {
             pages = VEHICLE_PAGES.ADD_PAGE;
@@ -26,25 +31,35 @@ public class VehicleHandler extends MouseAdapter {
             pages = VEHICLE_PAGES.SELECT_PAGE;
         }
 
-        
-        String[] vehicleType = {"Car", "Bike", "Truck"}; 
-         
-        JComboBox<String> selector = new JComboBox<>(vehicleType);
-        selector.setBounds(600, 250, 200, 30);
-        selector.setVisible(false);
-        selector.addActionListener(new ActionListener() { 
-            @Override 
-            public void actionPerformed(ActionEvent e) { 
-                String selectedItem = (String) selector.getSelectedItem(); 
-                System.out.println("Selected: " + selectedItem); 
-            } 
+        v = new JComboBox<>(new String[]{"Car", "Bike", "Truck"});
+        v.setBounds(600, 250, 200, 30);
+        v.setSelectedIndex(-1);
+        v.setVisible(false);
+        frame.add(v);
+
+        f = new JComboBox<>(new String[]{"Petrol", "Diesel", "Electric"});
+        f.setBounds(600, 290, 200, 30);
+        f.setSelectedIndex(-1);
+        f.setVisible(false);
+        frame.add(f);
+
+        t = new JComboBox<>(new String[]{"Automatic", "Manual"});
+        t.setBounds(600, 330, 200, 30);
+        t.setSelectedIndex(-1);
+        t.setVisible(false);
+        frame.add(t);
+
+        v.addActionListener(e -> {
+            vehicleType = v.getSelectedItem().toString();
         });
 
-        frame.add(selector);
-    }
+        f.addActionListener(e -> {
+            fuelType = f.getSelectedItem().toString();
+        });
 
-    public void setPage(VEHICLE_PAGES page) {
-        pages = page;
+        t.addActionListener(e -> {
+            transmissionType = t.getSelectedItem().toString();
+        });
     }
 
     @Override
@@ -52,23 +67,47 @@ public class VehicleHandler extends MouseAdapter {
         int mX = e.getX();
         int mY = e.getY();
 
-        if (mX >= 600 && mX <= 800 && mY >= 500 && mY <= 550) {
+        if (mX >= 400 && mX <= 600 && mY >= 500 && mY <= 550) {
             window.handleMouseListeners(App.STATE.RENTAL);
+            v.setVisible(false);
+            f.setVisible(false);
+            t.setVisible(false);
+            Login.getActiveUser().getRentedVehicles().add(vehicle);
+            App.setState(App.STATE.RENTAL);
+        } else if (mX >= 800 && mX <= 100 && mY >= 500 && mY <= 550) {
+            window.handleMouseListeners(App.STATE.RENTAL);
+            v.setVisible(false);
+            f.setVisible(false);
+            t.setVisible(false);
+            vehicleType = null; fuelType = null; transmissionType = null;
+            specialDetails.removeAll();
             App.setState(App.STATE.RENTAL);
         }
     }
 
     public void render(Graphics g) {
         g.setColor(Color.WHITE);
-        g.fillRect(600, 500, 200, 50);
+        g.fillRect(400, 500, 200, 50);
+        g.fillRect(800, 500, 200, 50);
         FontMetrics fm = g.getFontMetrics();
         int textWidth, textX, textY;
+
+        v.setVisible(true);
+        f.setVisible(true);
+        t.setVisible(true);
+
         if (pages == VEHICLE_PAGES.SELECT_PAGE) {
-            textWidth = fm.stringWidth("Vehicle Type");
-            textX = 600 + (200 - textWidth) / 2;
+            textWidth = fm.stringWidth("Add");
+            textX = 400 + (200 - textWidth) / 2;
             textY = 500 + (50 + fm.getAscent()) / 2;
             g.setColor(Color.BLACK);
-            g.drawString("Vehicle Type", textX, textY);
+            g.drawString("Add", textX, textY);
+
+            textWidth = fm.stringWidth("Back");
+            textX = 800 + (200 - textWidth) / 2;
+            textY = 500 + (50 + fm.getAscent()) / 2;
+            g.setColor(Color.BLACK);
+            g.drawString("Back", textX, textY);
         } else if (pages == VEHICLE_PAGES.ADD_PAGE) {
 
         }

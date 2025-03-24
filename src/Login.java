@@ -90,7 +90,6 @@ public class Login extends MouseAdapter {
     
         usernameField.setText("");
         passwordField.setText("");
-        frame.repaint();
     }    
 
     private void handleRegister() {
@@ -131,7 +130,6 @@ public class Login extends MouseAdapter {
     
         usernameField.setText("");
         passwordField.setText("");
-        frame.repaint();
     }    
 
     private String generateSalt() {
@@ -157,7 +155,6 @@ public class Login extends MouseAdapter {
         activeUser = null;
         pages = LOGIN_PAGES.MENU_PAGE;
         JOptionPane.showMessageDialog(frame, "You have been logged off.", "Log Off", JOptionPane.INFORMATION_MESSAGE);
-        frame.repaint();
     }
 
     public static User getActiveUser() {
@@ -168,33 +165,6 @@ public class Login extends MouseAdapter {
     public void mouseClicked(MouseEvent e) {
         int mX = e.getX();
         int mY = e.getY();
-
-        // if (pages == LOGIN_PAGES.MENU_PAGE) {
-        //     if (mX >= 600 && mX <= 800 && mY >= 300 && mY <= 350) {
-        //         if (loggedIn) {
-        //             window.handleMouseListeners(App.STATE.RENTAL);
-        //             App.setState(App.STATE.RENTAL);
-        //         } else {
-        //             pages = LOGIN_PAGES.LOGIN_PAGE;
-        //             usernameField.setVisible(true);
-        //             passwordField.setVisible(true);
-        //         }
-        //     } else if (mX >= 600 && mX <= 800 && mY >= 400 && mY <= 450) {
-        //         if (loggedIn) {
-        //             handleLogOff();
-        //         } else {
-        //             pages = LOGIN_PAGES.REGISTER_PAGE;
-        //             usernameField.setVisible(true);
-        //             passwordField.setVisible(true);
-        //         }
-        //     }
-        // } else if (pages == LOGIN_PAGES.LOGIN_PAGE || pages == LOGIN_PAGES.REGISTER_PAGE) {
-        //     if (mX >= 600 && mX <= 800 && mY >= 400 && mY <= 450) {
-        //         pages = LOGIN_PAGES.MENU_PAGE;
-        //         usernameField.setVisible(false);
-        //         passwordField.setVisible(false);
-        //     }
-        // }
 
         if (pages == LOGIN_PAGES.MENU_PAGE) {
             if (loggedIn) {
@@ -232,8 +202,6 @@ public class Login extends MouseAdapter {
                 passwordField.setVisible(false);
             }
         }
-
-        frame.repaint();
     }
 
     public void render(Graphics g) {
@@ -253,7 +221,7 @@ public class Login extends MouseAdapter {
                 g.setColor(Color.WHITE);
                 g.fillRect(600, 300, 200, 50);
                 g.fillRect(600, 400, 200, 50);
-                
+
                 textWidth = fm.stringWidth("Enter");
                 textX = 600 + (200 - textWidth) / 2;
                 textY = 300 + (50 + fm.getAscent()) / 2;

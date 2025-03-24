@@ -1,19 +1,21 @@
 public class Insurance {
-    private String regnNumber;
-    private String policyholder;
-    private String insurancePolicy;
-    private String agent;
-    private int coverage;
-    private int payment;
-    private String insuranceCompanyString;
+    private String insuranceCompany;
+    private double coverage;
 
-    public Insurance(String regnNumber, String policyHolder, String insurancePolicy, String agent, int coverage, int payment, String insuranceCompanyString) {
-        this.regnNumber = regnNumber;
-        this.policyholder = policyHolder;
-        this.insurancePolicy = insurancePolicy;
-        this.agent = agent;
+    public Insurance(String insuranceCompany, double coverage) {
+        this.insuranceCompany = insuranceCompany;
         this.coverage = coverage;
-        this.payment = payment;
-        this.insuranceCompanyString = insuranceCompanyString;
+    }
+
+    public String getInsuranceCompany() {
+        return insuranceCompany;
+    }
+
+    public double getCoverage() {
+        return coverage;
+    }
+
+    public void setCoverage(double cost) {
+        coverage -= cost;
     }
 }

@@ -91,16 +91,18 @@ public class Rental extends MouseAdapter {
 
     public void render(Graphics g) {
         g.setColor(Color.WHITE);
-        g.fillRect(600, 300, 200, 50);
         FontMetrics fm = g.getFontMetrics();
         int textWidth, textX, textY;
         if (Login.getActiveUser().isAdmin()) {
+            g.fillRect(600, 300, 200, 50);
+
             textWidth = fm.stringWidth("Add Vehicle");
             textX = 600 + (200 - textWidth) / 2;
             textY = 300 + (50 + fm.getAscent()) / 2;
             g.setColor(Color.BLACK);
             g.drawString("Add Vehicle", textX, textY);
         } else {
+            g.fillRect(600, 300, 200, 50);
             g.fillRect(600, 400, 200, 50);
 
             textWidth = fm.stringWidth("Select Vehicles");

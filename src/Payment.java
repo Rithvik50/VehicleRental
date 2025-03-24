@@ -1,11 +1,16 @@
 import java.awt.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import javax.swing.*;
+
+import javax.swing.JOptionPane;
 
 public class Payment extends MouseAdapter {
+    private JFrame frame;
     private Window window;
 
-    public Payment(Window window) {
+    public Payment(JFrame frame, Window window) {
+        this.frame = frame;
         this.window = window;
     }
 
@@ -16,7 +21,18 @@ public class Payment extends MouseAdapter {
 
         if (mX >= 600 && mX <= 800 && mY >= 300 && mY <= 350) {
             window.handleMouseListeners(App.STATE.RENTAL);
+            JOptionPane.showMessageDialog(frame, "Payment successful!", "Success", JOptionPane.INFORMATION_MESSAGE);
             App.setState(App.STATE.RENTAL);
+        }
+    }
+
+    public int calculateTotalCost() {
+        return 1;
+    }
+
+    public void rentVehicles() {
+        if (Login.getActiveUser().getInsurance().getCoverage() >= calculateTotalCost()) {
+
         }
     }
 

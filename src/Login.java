@@ -58,7 +58,7 @@ public class Login extends MouseAdapter {
         String password = new String(passwordField.getPassword());
     
         try (Connection conn = DriverManager.getConnection(DB_URL, DB_USER, DB_PASSWORD)) {
-            String query = "SELECT hash, salt, admin FROM Users WHERE username = ?";
+            String query = "SELECT hash, salt, admin, insurance, coverage FROM Users WHERE username = ?";
             try (PreparedStatement stmt = conn.prepareStatement(query)) {
                 stmt.setString(1, username);
                 ResultSet rs = stmt.executeQuery();
@@ -70,7 +70,7 @@ public class Login extends MouseAdapter {
                     String computedHash = hashPassword(password, storedSalt);
                     if (computedHash.equals(storedHash)) {
                         loggedIn = true;
-                        activeUser = new User(username, rs.getBoolean("admin"));
+                        activeUser = new User(username, rs.getBoolean("admin"), new Insurance(rs.getString("insurance"), rs.getDouble("coverage")));
                         JOptionPane.showMessageDialog(frame, "Login successful! Welcome, " + username + "!", "Success", JOptionPane.INFORMATION_MESSAGE);
                         pages = LOGIN_PAGES.MENU_PAGE;
     
@@ -169,33 +169,70 @@ public class Login extends MouseAdapter {
         int mX = e.getX();
         int mY = e.getY();
 
+        // if (pages == LOGIN_PAGES.MENU_PAGE) {
+        //     if (mX >= 600 && mX <= 800 && mY >= 300 && mY <= 350) {
+        //         if (loggedIn) {
+        //             window.handleMouseListeners(App.STATE.RENTAL);
+        //             App.setState(App.STATE.RENTAL);
+        //         } else {
+        //             pages = LOGIN_PAGES.LOGIN_PAGE;
+        //             usernameField.setVisible(true);
+        //             passwordField.setVisible(true);
+        //         }
+        //     } else if (mX >= 600 && mX <= 800 && mY >= 400 && mY <= 450) {
+        //         if (loggedIn) {
+        //             handleLogOff();
+        //         } else {
+        //             pages = LOGIN_PAGES.REGISTER_PAGE;
+        //             usernameField.setVisible(true);
+        //             passwordField.setVisible(true);
+        //         }
+        //     }
+        // } else if (pages == LOGIN_PAGES.LOGIN_PAGE || pages == LOGIN_PAGES.REGISTER_PAGE) {
+        //     if (mX >= 600 && mX <= 800 && mY >= 400 && mY <= 450) {
+        //         pages = LOGIN_PAGES.MENU_PAGE;
+        //         usernameField.setVisible(false);
+        //         passwordField.setVisible(false);
+        //     }
+        // }
+
         if (pages == LOGIN_PAGES.MENU_PAGE) {
-            if (mX >= 600 && mX <= 800 && mY >= 300 && mY <= 350) {
-                if (loggedIn) {
+            if (loggedIn) {
+                if (mX >= 600 && mX <= 800 && mY >= 300 && mY <= 350) {
                     window.handleMouseListeners(App.STATE.RENTAL);
                     App.setState(App.STATE.RENTAL);
-                } else {
+                } else if (mX >= 600 && mX <= 800 && mY >= 400 && mY <= 450) {
+                    handleLogOff();
+                }
+            } else {
+                if (mX >= 600 && mX <= 800 && mY >= 300 && mY <= 350) {
                     pages = LOGIN_PAGES.LOGIN_PAGE;
                     usernameField.setVisible(true);
                     passwordField.setVisible(true);
-                }
-            } else if (mX >= 600 && mX <= 800 && mY >= 400 && mY <= 450) {
-                if (loggedIn) {
-                    handleLogOff();
-                } else {
+                } else if (mX >= 600 && mX <= 800 && mY >= 400 && mY <= 450) {
                     pages = LOGIN_PAGES.REGISTER_PAGE;
                     usernameField.setVisible(true);
                     passwordField.setVisible(true);
                 }
             }
-        } else if (pages == LOGIN_PAGES.LOGIN_PAGE || pages == LOGIN_PAGES.REGISTER_PAGE) {
+        } else if (pages == LOGIN_PAGES.REGISTER_PAGE) {
             if (mX >= 600 && mX <= 800 && mY >= 400 && mY <= 450) {
                 pages = LOGIN_PAGES.MENU_PAGE;
+                usernameField.setText("");
+                passwordField.setText("");
+                usernameField.setVisible(false);
+                passwordField.setVisible(false);
+            }
+        } else if (pages == LOGIN_PAGES.LOGIN_PAGE) {
+            if (mX >= 600 && mX <= 800 && mY >= 400 && mY <= 450) {
+                pages = LOGIN_PAGES.MENU_PAGE;
+                usernameField.setText("");
+                passwordField.setText("");
                 usernameField.setVisible(false);
                 passwordField.setVisible(false);
             }
         }
-        
+
         frame.repaint();
     }
 
@@ -205,15 +242,18 @@ public class Login extends MouseAdapter {
 
         g.setColor(Color.WHITE);
         if (pages == LOGIN_PAGES.MENU_PAGE) {
-            g.fillRect(600, 300, 200, 50);
-            g.fillRect(600, 400, 200, 50);
             g.setColor(Color.WHITE);
             Font font = new Font("Arial", Font.BOLD, 30);
             g.setFont(font);
             g.drawString("Vehicle Rental System", 535, 200);
             g.setColor(Color.BLACK);
             g.setFont(fm.getFont());
+
             if (loggedIn) {
+                g.setColor(Color.WHITE);
+                g.fillRect(600, 300, 200, 50);
+                g.fillRect(600, 400, 200, 50);
+                
                 textWidth = fm.stringWidth("Enter");
                 textX = 600 + (200 - textWidth) / 2;
                 textY = 300 + (50 + fm.getAscent()) / 2;
@@ -225,6 +265,10 @@ public class Login extends MouseAdapter {
                 textY = 400 + (50 + fm.getAscent()) / 2;
                 g.drawString("Log Off", textX, textY);
             } else {
+                g.setColor(Color.WHITE);
+                g.fillRect(600, 300, 200, 50);
+                g.fillRect(600, 400, 200, 50);
+
                 textWidth = fm.stringWidth("Login");
                 textX = 600 + (200 - textWidth) / 2;
                 textY = 300 + (50 + fm.getAscent()) / 2;

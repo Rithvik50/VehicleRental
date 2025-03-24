@@ -5,11 +5,14 @@ import java.util.List;
 public class User {
     private String userId;
     private List<Vehicle> rentedVehicles;
+    private Insurance insurance;
     private boolean admin = false;
 
-    public User(String userId, boolean admin) {
+    public User(String userId, boolean admin, Insurance insurance) {
         this.userId = userId;
         this.admin = admin;
+        this.insurance = insurance;
+
         this.rentedVehicles = new ArrayList<>();
     }
 
@@ -32,6 +35,10 @@ public class User {
     public List<Vehicle> getRentedVehicles() {
         Collections.sort(rentedVehicles);
         return rentedVehicles;
+    }
+
+    public Insurance getInsurance() {
+        return insurance;
     }
 
     public void displayRentedVehicles() {

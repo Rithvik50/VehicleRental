@@ -22,7 +22,7 @@ public class Window extends JPanel implements ActionListener {
         login = new Login(frame, this);
         rs = new Rental(this);
         vh = new VehicleHandler(frame, this);
-        payment = new Payment(this);
+        payment = new Payment(frame, this);
 
         this.addMouseListener(login);
 

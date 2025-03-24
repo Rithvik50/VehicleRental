@@ -50,7 +50,7 @@ public class VehicleHandler extends MouseAdapter {
         frame.add(t);
 
         model = new JComboBox<>();
-        model.setBounds(600, 250, 200, 30);
+        model.setBounds(600, 350, 200, 30);
         model.setSelectedIndex(-1);
         model.setVisible(false);
         frame.add(model);

@@ -12,9 +12,6 @@ public class VehicleHandler extends MouseAdapter {
     private ArrayList<Object> specialDetails;
     private JComboBox<String> v, f, t;
     private JComboBox<String> model;
-    private JComboBox<String> carT;
-    private JComboBox<String> bikeT;
-    private JComboBox<String> truckT;
 
     enum VEHICLE_PAGES {
         SELECT_PAGE, ADD_PAGE

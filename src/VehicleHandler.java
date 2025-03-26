@@ -149,7 +149,7 @@ public class VehicleHandler extends MouseAdapter {
         String sql = "INSERT INTO RentedVehicles (user_id, vehicle_id, rental_date, fuel_type, transmission_type) VALUES (?, ?, ?, ?, ?)";
     
         try (Connection conn = DriverManager.getConnection(App.getDatabase()[0], App.getDatabase()[1], App.getDatabase()[2]);
-             PreparedStatement stmt = conn.prepareStatement(sql)) {
+            PreparedStatement stmt = conn.prepareStatement(sql)) {
     
             stmt.setString(1, Login.getActiveUser().getUserId());
             stmt.setString(2, vehicle.getRegnNumber());

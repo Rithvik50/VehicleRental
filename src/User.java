@@ -35,7 +35,7 @@ public class User {
     public List<Vehicle> getRentedVehicles() {
         rentedVehicles.clear();
         
-        String sql = "SELECT v.regnNumber, v.fuelType, v.transmissionType, rv.rental_date";
+        String sql = "SELECT v.regnNumber, v.fuelType, v.transmissionType";
     
         try (Connection conn = DriverManager.getConnection(App.getDatabase()[0], App.getDatabase()[1], App.getDatabase()[2]);
             PreparedStatement stmt = conn.prepareStatement(sql)) {

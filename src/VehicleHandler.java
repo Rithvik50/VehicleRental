@@ -141,11 +141,11 @@ public class VehicleHandler extends MouseAdapter {
     
         if (vehicle != null) {
             System.out.println("Vehicle finalized: " + vehicle.getRegnNumber());
-            storeRentedVehicle();
+            storeVehicle();
         }
     }
 
-    public void storeRentedVehicle() {
+    public void storeVehicle() {
         String sql = "INSERT INTO RentedVehicles (user_id, vehicle_id, rental_date, fuel_type, transmission_type) VALUES (?, ?, ?, ?, ?)";
     
         try (Connection conn = DriverManager.getConnection(App.getDatabase()[0], App.getDatabase()[1], App.getDatabase()[2]);

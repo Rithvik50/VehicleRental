@@ -1,35 +1,42 @@
-public abstract class Vehicle implements Comparable<Vehicle> {
+import java.time.LocalDate;
+
+public class Vehicle {
     private String regnNumber;
     private FuelType fuelType;
     private double perDayRent;
-    private String rentalDate;
+    private LocalDate startDate;
+    private LocalDate endDate;
     private TransmissionType transmissionType;
 
-    public Vehicle(String regnNumber, FuelType fuelType, TransmissionType transmissionType, double perDayRent, String rentalDate) {
+    public Vehicle() {
+        
+    }
+
+    public Vehicle(String regnNumber, FuelType fuelType, TransmissionType transmissionType, double perDayRent) {
         this.regnNumber = regnNumber;
         this.fuelType = fuelType;
         this.transmissionType = transmissionType;
         this.perDayRent = perDayRent;
-        this.rentalDate = rentalDate;
+        ;
     }
 
     public String getRegnNumber() {
         return regnNumber;
     }
 
-    public String getRentalDate() {
-        return rentalDate;
-    }
-
-    protected FuelType getFuelType() {
+    public FuelType getFuelType() {
         return fuelType;
     }
 
-    protected TransmissionType getTransmissionType() {
+    public TransmissionType getTransmissionType() {
         return transmissionType;
     }
 
-    protected double getPerDayRent() {
+    public LocalDate getRentalDate() {
+        return startDate;
+    }
+
+    public double getPerDayRent() {
         return perDayRent;
     }
 
@@ -39,10 +46,5 @@ public abstract class Vehicle implements Comparable<Vehicle> {
         System.out.println("Transmission Type: " + getTransmissionType());
         System.out.println("Per Day Rent: ₹" + getPerDayRent());
         System.out.println("Rental Date: " + getRentalDate());
-    }
-
-    @Override
-    public int compareTo(Vehicle other) {
-        return this.rentalDate.compareTo(other.rentalDate);
     }
 }

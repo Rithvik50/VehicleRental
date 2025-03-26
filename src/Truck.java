@@ -6,11 +6,18 @@ public class Truck extends Vehicle {
     private TruckType truckType;
     private int numberOfAxles;
 
-    public Truck(String regnNumber, FuelType fuelType, TransmissionType transmissionType, double perDayRent, String rentalDate,
-                 int numberOfAxles, TruckType truckType) {
-        super(regnNumber, fuelType, transmissionType, perDayRent, rentalDate);
+    public Truck(String regnNumber, FuelType fuelType, TransmissionType transmissionType, double perDayRent) {
+        super(regnNumber, fuelType, transmissionType, perDayRent);
+    }
+
+    public Truck setTruckType(TruckType truckType) {
         this.truckType = truckType;
+        return this;
+    }
+
+    public Truck setNumberOfAxles(int numberOfAxles) {
         this.numberOfAxles = numberOfAxles;
+        return this;
     }
 
     @Override

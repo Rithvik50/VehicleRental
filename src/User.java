@@ -1,6 +1,9 @@
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
+
+import org.w3c.dom.events.Event;
 
 public class User {
     private String userId;
@@ -33,7 +36,7 @@ public class User {
     }
 
     public List<Vehicle> getRentedVehicles() {
-        Collections.sort(rentedVehicles);
+        rentedVehicles.sort(Comparator.comparing(Vehicle::getRentalDate));
         return rentedVehicles;
     }
 

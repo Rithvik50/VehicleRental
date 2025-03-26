@@ -7,12 +7,23 @@ public class Bike extends Vehicle {
     private int engineDisplacement;
     private double weight;
 
-    public Bike(String regnNumber, FuelType fuelType, TransmissionType transmissionType, double perDayRent, String rentalDate,
-                      int engineDisplacement, double weight, BikeType bikeType) {
-        super(regnNumber, fuelType, transmissionType, perDayRent, rentalDate);
+    public Bike(String regnNumber, FuelType fuelType, TransmissionType transmissionType, double perDayRent) {
+        super(regnNumber, fuelType, transmissionType, perDayRent);
+    }
+
+    public Bike setBikeType(BikeType bikeType) {
         this.bikeType = bikeType;
+        return this;
+    }
+
+    public Bike setEngineDisplacement(int engineDisplacement) {
         this.engineDisplacement = engineDisplacement;
+        return this;
+    }
+
+    public Bike setWeight(double weight) {
         this.weight = weight;
+        return this;
     }
 
     @Override

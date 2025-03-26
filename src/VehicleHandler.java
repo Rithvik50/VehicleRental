@@ -23,6 +23,7 @@ public class VehicleHandler extends MouseAdapter {
         this.frame = frame;
         this.window = window;
         specialDetails = new ArrayList<Object>();
+        vehicle = new Vehicle();
 
         if (Login.getActiveUser() != null && Login.getActiveUser().isAdmin()) {
             pages = VEHICLE_PAGES.ADD_PAGE;
@@ -110,6 +111,9 @@ public class VehicleHandler extends MouseAdapter {
     }
     
     public void finalizeVehicle() {
+        if (vehicleType == "Car") {
+            // vehicle = new Car("8998", fuelType, transmissionType, 0.0);
+        }
         // vehicle = new Vehicle(vehicleType, model.getSelectedItem().toString(), fuelType, transmissionType, specialDetails);
     }
 

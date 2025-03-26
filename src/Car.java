@@ -6,11 +6,18 @@ public class Car extends Vehicle {
     private CarType carType;
     private int numberOfSeats;
 
-    public Car(String regnNumber, FuelType fuelType, TransmissionType transmissionType, double perDayRent, String rentalDate, 
-                CarType carType, int numberOfSeats) {
-        super(regnNumber, fuelType, transmissionType, perDayRent, rentalDate);
+    public Car(String regnNumber, FuelType fuelType, TransmissionType transmissionType, double perDayRent) {
+        super(regnNumber, fuelType, transmissionType, perDayRent);
+    }
+
+    public Car setCarType(CarType carType) {
         this.carType = carType;
+        return this;
+    }
+
+    public Car setNumberOfSeats(int numberOfSeats) {
         this.numberOfSeats = numberOfSeats;
+        return this;
     }
 
     @Override

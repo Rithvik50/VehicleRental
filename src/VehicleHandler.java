@@ -155,8 +155,8 @@ public class VehicleHandler extends MouseAdapter {
             stmt.setString(2, vehicle.getRegnNumber());
             stmt.setTimestamp(3, java.sql.Timestamp.valueOf(LocalDate.now().atStartOfDay()));
             
-            stmt.setInt(4, vehicle.getFuelType().getValue());
-            stmt.setInt(5, vehicle.getTransmissionType().getValue());
+            stmt.setString(4, vehicle.getFuelType().getValue());
+            stmt.setString(5, vehicle.getTransmissionType().getValue());
     
             stmt.executeUpdate();
             System.out.println("Vehicle stored in database successfully.");

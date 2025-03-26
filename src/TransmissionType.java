@@ -1,17 +1,17 @@
 public enum TransmissionType {
-    AUTOMATIC(1), MANUAL(2);
+    MANUAL("Manual"), AUTOMATIC("Automatic");
 
-    private final int value;
+    private final String value;
 
-    TransmissionType(int value) {
+    TransmissionType(String value) {
         this.value = value;
     }
 
-    public int getValue() {
+    public String getValue() {
         return value;
     }
 
-    public static TransmissionType fromValue(int value) {
+    public static TransmissionType fromValue(String value) {
         for (TransmissionType type : values()) {
             if (type.value == value) {
                 return type;

@@ -46,8 +46,8 @@ public class User {
             while (rs.next()) {
                 Vehicle vehicle = new Vehicle(
                     rs.getString("regnNumber"),
-                    FuelType.fromValue(rs.getInt("fuelType")),
-                    TransmissionType.fromValue(rs.getInt("transmissionType")),
+                    FuelType.fromValue(rs.getString("fuelType")),
+                    TransmissionType.fromValue(rs.getString("transmissionType")),
                     rs.getDouble("perDayRent")
                 );
                 rentedVehicles.add(vehicle);

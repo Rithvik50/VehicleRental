@@ -1,9 +1,6 @@
+import java.sql.*;
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
 import java.util.List;
-
-import org.w3c.dom.events.Event;
 
 public class User {
     private String userId;
@@ -36,7 +33,29 @@ public class User {
     }
 
     public List<Vehicle> getRentedVehicles() {
-        rentedVehicles.sort(Comparator.comparing(Vehicle::getRentalDate));
+        rentedVehicles.clear();
+        
+        String sql = "SELECT v.regnNumber, v.fuelType, v.transmissionType, rv.rental_date";
+    
+        try (Connection conn = DriverManager.getConnection(App.getDatabase()[0], App.getDatabase()[1], App.getDatabase()[2]);
+            PreparedStatement stmt = conn.prepareStatement(sql)) {
+            
+            stmt.setString(1, userId);
+            ResultSet rs = stmt.executeQuery();
+    
+            while (rs.next()) {
+                Vehicle vehicle = new Vehicle(
+                    rs.getString("regnNumber"),
+                    FuelType.fromValue(rs.getInt("fuelType")),
+                    TransmissionType.fromValue(rs.getInt("transmissionType")),
+                    rs.getDouble("perDayRent")
+                );
+                rentedVehicles.add(vehicle);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        
         return rentedVehicles;
     }
 

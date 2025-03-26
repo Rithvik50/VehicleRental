@@ -17,10 +17,6 @@ public class Login extends MouseAdapter {
 
     private Window window;
 
-    private final String DB_URL = "jdbc:mysql://localhost:3306/VehicleRentalSystem";
-    private final String DB_USER = "root";
-    private final String DB_PASSWORD = "Thealamo13";
-
     enum LOGIN_PAGES {
         MENU_PAGE, LOGIN_PAGE, REGISTER_PAGE
     }
@@ -57,8 +53,8 @@ public class Login extends MouseAdapter {
         String username = usernameField.getText();
         String password = new String(passwordField.getPassword());
     
-        try (Connection conn = DriverManager.getConnection(DB_URL, DB_USER, DB_PASSWORD)) {
-            String query = "SELECT hash, salt, admin, insurance, coverage FROM Users WHERE username = ?";
+        try (Connection conn = DriverManager.getConnection(App.getDatabase()[0], App.getDatabase()[1], App.getDatabase()[2])) {
+            String query = "SELECT hash, salt, admin, insurance, coverage FROM User WHERE username = ?";
             try (PreparedStatement stmt = conn.prepareStatement(query)) {
                 stmt.setString(1, username);
                 ResultSet rs = stmt.executeQuery();
@@ -96,8 +92,8 @@ public class Login extends MouseAdapter {
         String username = usernameField.getText();
         String password = new String(passwordField.getPassword());
     
-        try (Connection conn = DriverManager.getConnection(DB_URL, DB_USER, DB_PASSWORD)) {
-            String checkQuery = "SELECT username FROM Users WHERE username = ?";
+        try (Connection conn = DriverManager.getConnection(App.getDatabase()[0], App.getDatabase()[1], App.getDatabase()[2])) {
+            String checkQuery = "SELECT username FROM User WHERE username = ?";
             try (PreparedStatement checkStmt = conn.prepareStatement(checkQuery)) {
                 checkStmt.setString(1, username);
                 ResultSet rs = checkStmt.executeQuery();
@@ -111,7 +107,7 @@ public class Login extends MouseAdapter {
             String salt = generateSalt();
             String hash = hashPassword(password, salt);
     
-            String insertQuery = "INSERT INTO Users (username, hash, salt) VALUES (?, ?, ?)";
+            String insertQuery = "INSERT INTO User (username, hash, salt) VALUES (?, ?, ?)";
             try (PreparedStatement insertStmt = conn.prepareStatement(insertQuery)) {
                 insertStmt.setString(1, username);
                 insertStmt.setString(2, hash);

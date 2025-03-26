@@ -8,10 +8,6 @@ public class Vehicle {
     private LocalDate endDate;
     private TransmissionType transmissionType;
 
-    public Vehicle() {
-        
-    }
-
     public Vehicle(String regnNumber, FuelType fuelType, TransmissionType transmissionType, double perDayRent) {
         this.regnNumber = regnNumber;
         this.fuelType = fuelType;

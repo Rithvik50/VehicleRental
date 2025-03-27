@@ -11,6 +11,8 @@ public class VehicleHandler extends MouseAdapter {
     private JFrame frame;
     private Vehicle vehicle;
     private String vehicleType;
+    private FuelType fuelType;
+    private TransmissionType transmissionType;
     private ArrayList<Object> specialDetails;
     private JComboBox<String> v, f, t;
     private JComboBox<String> model;
@@ -63,20 +65,20 @@ public class VehicleHandler extends MouseAdapter {
 
         f.addActionListener(e -> {
             String fuel = f.getSelectedItem().toString();
-            if (fuel == "Petrol") {
+            if (fuel.equals("Petrol")) {
                 vehicle.setFuelType(FuelType.PETROL);
-            } else if (fuel == "Diesel") {
+            } else if (fuel.equals("Diesel")) {
                 vehicle.setFuelType(FuelType.DIESEL);
-            } else if (fuel == "Electric") {
+            } else if (fuel.equals("Electric")) {
                 vehicle.setFuelType(FuelType.ELECTRIC);
             }
         });
 
         t.addActionListener(e -> {
             String transmission = t.getSelectedItem().toString();
-            if (transmission == "Manual") {
+            if (transmission.equals("Manual")) {
                 vehicle.setTransmissionType(TransmissionType.MANUAL);
-            } else if (transmission == "Automatic") {
+            } else if (transmission.equals("Automatic")) {
                 vehicle.setTransmissionType(TransmissionType.AUTOMATIC);
             }
         });
@@ -125,21 +127,22 @@ public class VehicleHandler extends MouseAdapter {
     }
     
     public void finalizeVehicle() {
-        if (vehicleType == null || vehicle.getFuelType() == null || vehicle.getTransmissionType() == null) {
+        if (vehicleType == null || fuelType == null || transmissionType == null) {
             System.out.println("Please select all options before finalizing the vehicle.");
             return;
         }
     
         if (vehicleType.equals("Car")) {
-            vehicle = new Car("8998", vehicle.getFuelType(), vehicle.getTransmissionType(), 1000.0);
+            vehicle = new Car("8998", fuelType, transmissionType, 1000.0);
         } else if (vehicleType.equals("Bike")) {
-            vehicle = new Bike("8998", vehicle.getFuelType(), vehicle.getTransmissionType(), 500.0);
+            vehicle = new Bike("8998", fuelType, transmissionType, 500.0);
         } else if (vehicleType.equals("Truck")) {
-            vehicle = new Truck("8998", vehicle.getFuelType(), vehicle.getTransmissionType(), 2000.0);
+            vehicle = new Truck("8998", fuelType, transmissionType, 2000.0);
         }
     
         if (vehicle != null) {
             System.out.println("Vehicle finalized: " + vehicle.getRegnNumber());
+            vehicle.setSpecialDetails(specialDetails);
             storeVehicle();
         }
     }
@@ -153,9 +156,6 @@ public class VehicleHandler extends MouseAdapter {
             stmt.setString(1, Login.getActiveUser().getUserId());
             stmt.setString(2, vehicle.getRegnNumber());
             stmt.setTimestamp(3, java.sql.Timestamp.valueOf(LocalDate.now().atStartOfDay()));
-            
-            stmt.setString(4, vehicle.getFuelType().getValue());
-            stmt.setString(5, vehicle.getTransmissionType().getValue());
     
             stmt.executeUpdate();
             System.out.println("Vehicle stored in database successfully.");
@@ -187,9 +187,7 @@ public class VehicleHandler extends MouseAdapter {
                 f.setVisible(false);
                 t.setVisible(false);
                 model.setVisible(false);
-                vehicleType = null;
-                vehicle.setFuelType(null);
-                vehicle.setTransmissionType(null);
+                vehicleType = null; fuelType = null; transmissionType = null;
                 specialDetails.clear();
                 App.setState(App.STATE.RENTAL);
             }
@@ -211,14 +209,14 @@ public class VehicleHandler extends MouseAdapter {
                 f.setVisible(false);
                 t.setVisible(false);
                 model.setVisible(false);
-                vehicleType = null;
-                vehicle.setFuelType(null);
-                vehicle.setTransmissionType(null);
+                vehicleType = null; fuelType = null; transmissionType = null;
                 specialDetails.clear();
                 App.setState(App.STATE.RENTAL);
             }
         } else if (pages == VEHICLE_PAGES.SPECIAL_DETAILS) {
-
+            v.setVisible(false);
+            f.setVisible(false);
+            t.setVisible(false);
         }
     }
 
@@ -260,6 +258,8 @@ public class VehicleHandler extends MouseAdapter {
             textY = 500 + (50 + fm.getAscent()) / 2;
             g.setColor(Color.BLACK);
             g.drawString("Back", textX, textY);
+        } else if (pages == VEHICLE_PAGES.SPECIAL_DETAILS) {
+
         }
     }
 }

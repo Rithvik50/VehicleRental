@@ -2,6 +2,7 @@ import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 
 public class User {
     private String userId;
@@ -36,8 +37,10 @@ public class User {
     public List<Vehicle> getRentedVehicles() {
         rentedVehicles.clear();
         
-        String sql = "SELECT v.regnNumber, v.fuelType, v.transmissionType";
-    
+        String sql = "SELECT v.regnNumber, v.fuelType, v.transmissionType, v.perDayRent, v.specialDetails, rv.rental_date " +
+            "FROM RentedVehicles rv JOIN Vehicles v ON rv.vehicle_id = v.regnNumber " +
+            "WHERE rv.user_id = ? ORDER BY rv.rental_date ASC";
+
         try (Connection conn = DriverManager.getConnection(App.getDatabase()[0], App.getDatabase()[1], App.getDatabase()[2]);
             PreparedStatement stmt = conn.prepareStatement(sql)) {
             
@@ -50,7 +53,7 @@ public class User {
                     FuelType.fromValue(rs.getString("fuelType")),
                     TransmissionType.fromValue(rs.getString("transmissionType")),
                     rs.getDouble("perDayRent")
-                ).setSpecialDetails(new Gson().fromJson(rs.getString("specialDetails"), ArrayList.class));
+                ).setSpecialDetails(new Gson().fromJson(rs.getString("specialDetails"), new TypeToken<ArrayList<Object>>() {}.getType()));
                 rentedVehicles.add(vehicle);
             }
         } catch (SQLException e) {

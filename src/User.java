@@ -50,7 +50,7 @@ public class User {
                     FuelType.fromValue(rs.getString("fuelType")),
                     TransmissionType.fromValue(rs.getString("transmissionType")),
                     rs.getDouble("perDayRent")
-                ).setSpecialDetails(new Gson().toJson(list));
+                ).setSpecialDetails(new Gson().fromJson(rs.getString("specialDetails"), ArrayList.class));
                 rentedVehicles.add(vehicle);
             }
         } catch (SQLException e) {

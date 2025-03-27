@@ -15,19 +15,30 @@ public class Vehicle {
         this.fuelType = fuelType;
         this.transmissionType = transmissionType;
         this.perDayRent = perDayRent;
-        this.specialDetails = specialDetails;
     }
 
     public String getRegnNumber() {
         return regnNumber;
     }
 
+    public void setRegnNumber(String regnNumber) {
+        this.regnNumber = regnNumber;
+    }
+
     public FuelType getFuelType() {
         return fuelType;
     }
 
+    public void setFuelType(FuelType fuelType) {
+        this.fuelType = fuelType;
+    }
+
     public TransmissionType getTransmissionType() {
         return transmissionType;
+    }
+
+    public void setTransmissionType(TransmissionType transmissionType) {
+        this.transmissionType = transmissionType;
     }
 
     public LocalDate getRentalDate() {

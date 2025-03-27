@@ -1,6 +1,5 @@
 import java.awt.*;
 import java.awt.event.*;
-import java.net.http.HttpClient.Version;
 import java.sql.*;
 import java.time.LocalDate;
 import java.util.ArrayList;
@@ -12,8 +11,6 @@ public class VehicleHandler extends MouseAdapter {
     private JFrame frame;
     private Vehicle vehicle;
     private String vehicleType;
-    private FuelType fuelType;
-    private TransmissionType transmissionType;
     private ArrayList<Object> specialDetails;
     private JComboBox<String> v, f, t;
     private JComboBox<String> model;
@@ -67,20 +64,20 @@ public class VehicleHandler extends MouseAdapter {
         f.addActionListener(e -> {
             String fuel = f.getSelectedItem().toString();
             if (fuel == "Petrol") {
-                fuelType = FuelType.PETROL;
+                vehicle.setFuelType(FuelType.PETROL);
             } else if (fuel == "Diesel") {
-                fuelType = FuelType.DIESEL;
+                vehicle.setFuelType(FuelType.DIESEL);
             } else if (fuel == "Electric") {
-                fuelType = FuelType.ELECTRIC;
+                vehicle.setFuelType(FuelType.ELECTRIC);
             }
         });
 
         t.addActionListener(e -> {
             String transmission = t.getSelectedItem().toString();
-            if (transmission == "Automatic") {
-                transmissionType = TransmissionType.AUTOMATIC;
-            } else if (transmission == "Manual") {
-                transmissionType = TransmissionType.MANUAL;
+            if (transmission == "Manual") {
+                vehicle.setTransmissionType(TransmissionType.MANUAL);
+            } else if (transmission == "Automatic") {
+                vehicle.setTransmissionType(TransmissionType.AUTOMATIC);
             }
         });
     }
@@ -128,17 +125,17 @@ public class VehicleHandler extends MouseAdapter {
     }
     
     public void finalizeVehicle() {
-        if (vehicleType == null || fuelType == null || transmissionType == null) {
+        if (vehicleType == null || vehicle.getFuelType() == null || vehicle.getTransmissionType() == null) {
             System.out.println("Please select all options before finalizing the vehicle.");
             return;
         }
     
         if (vehicleType.equals("Car")) {
-            vehicle = new Car("8998", fuelType, transmissionType, 1000.0);
+            vehicle = new Car("8998", vehicle.getFuelType(), vehicle.getTransmissionType(), 1000.0);
         } else if (vehicleType.equals("Bike")) {
-            vehicle = new Bike("8998", fuelType, transmissionType, 500.0);
+            vehicle = new Bike("8998", vehicle.getFuelType(), vehicle.getTransmissionType(), 500.0);
         } else if (vehicleType.equals("Truck")) {
-            vehicle = new Truck("8998", fuelType, transmissionType, 2000.0);
+            vehicle = new Truck("8998", vehicle.getFuelType(), vehicle.getTransmissionType(), 2000.0);
         }
     
         if (vehicle != null) {
@@ -190,7 +187,9 @@ public class VehicleHandler extends MouseAdapter {
                 f.setVisible(false);
                 t.setVisible(false);
                 model.setVisible(false);
-                vehicleType = null; fuelType = null; transmissionType = null;
+                vehicleType = null;
+                vehicle.setFuelType(null);
+                vehicle.setTransmissionType(null);
                 specialDetails.clear();
                 App.setState(App.STATE.RENTAL);
             }
@@ -212,7 +211,9 @@ public class VehicleHandler extends MouseAdapter {
                 f.setVisible(false);
                 t.setVisible(false);
                 model.setVisible(false);
-                vehicleType = null; fuelType = null; transmissionType = null;
+                vehicleType = null;
+                vehicle.setFuelType(null);
+                vehicle.setTransmissionType(null);
                 specialDetails.clear();
                 App.setState(App.STATE.RENTAL);
             }

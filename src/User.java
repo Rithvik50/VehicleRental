@@ -1,6 +1,7 @@
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
+import com.google.gson.Gson;
 
 public class User {
     private String userId;
@@ -49,7 +50,7 @@ public class User {
                     FuelType.fromValue(rs.getString("fuelType")),
                     TransmissionType.fromValue(rs.getString("transmissionType")),
                     rs.getDouble("perDayRent")
-                );
+                ).setSpecialDetails(new Gson().toJson(list));
                 rentedVehicles.add(vehicle);
             }
         } catch (SQLException e) {

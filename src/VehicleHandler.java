@@ -1,5 +1,6 @@
 import java.awt.*;
 import java.awt.event.*;
+import java.net.http.HttpClient.Version;
 import java.sql.*;
 import java.time.LocalDate;
 import java.util.ArrayList;
@@ -18,7 +19,7 @@ public class VehicleHandler extends MouseAdapter {
     private JComboBox<String> model;
 
     enum VEHICLE_PAGES {
-        SELECT_PAGE, ADD_PAGE
+        SELECT_PAGE, ADD_PAGE, SPECIAL_DETAILS
     }
 
     private VEHICLE_PAGES pages;
@@ -85,6 +86,7 @@ public class VehicleHandler extends MouseAdapter {
     }
 
     public void updateSpecialDetails() {
+        pages = VEHICLE_PAGES.SPECIAL_DETAILS;
         if (model == null) {
             model = new JComboBox<>();
             model.setBounds(400, 250, 200, 30);
@@ -146,7 +148,7 @@ public class VehicleHandler extends MouseAdapter {
     }
 
     public void storeVehicle() {
-        String sql = "INSERT INTO RentedVehicles (user_id, vehicle_id, rental_date, fuel_type, transmission_type) VALUES (?, ?, ?, ?, ?)";
+        String sql = "INSERT INTO RentedVehicles (user_id, vehicle_id, rental_date) VALUES (?, ?, ?)";
     
         try (Connection conn = DriverManager.getConnection(App.getDatabase()[0], App.getDatabase()[1], App.getDatabase()[2]);
             PreparedStatement stmt = conn.prepareStatement(sql)) {
@@ -193,6 +195,28 @@ public class VehicleHandler extends MouseAdapter {
                 App.setState(App.STATE.RENTAL);
             }
         } else if (pages == VEHICLE_PAGES.ADD_PAGE) {
+            if (mX >= 400 && mX <= 600 && mY >= 500 && mY <= 550) {
+                window.handleMouseListeners(App.STATE.RENTAL);
+                v.setVisible(false);
+                f.setVisible(false);
+                t.setVisible(false);
+                model.setVisible(false);
+                v.setSelectedIndex(0);
+                f.setSelectedIndex(0);
+                t.setSelectedIndex(0);
+                Login.getActiveUser().getRentedVehicles().add(vehicle);
+                App.setState(App.STATE.RENTAL);
+            } else if (mX >= 800 && mX <= 1000 && mY >= 500 && mY <= 550) {
+                window.handleMouseListeners(App.STATE.RENTAL);
+                v.setVisible(false);
+                f.setVisible(false);
+                t.setVisible(false);
+                model.setVisible(false);
+                vehicleType = null; fuelType = null; transmissionType = null;
+                specialDetails.clear();
+                App.setState(App.STATE.RENTAL);
+            }
+        } else if (pages == VEHICLE_PAGES.SPECIAL_DETAILS) {
 
         }
     }

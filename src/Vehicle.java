@@ -1,4 +1,5 @@
 import java.time.LocalDate;
+import java.util.ArrayList;
 
 public class Vehicle {
     private String regnNumber;
@@ -7,13 +8,14 @@ public class Vehicle {
     private LocalDate startDate;
     private LocalDate endDate;
     private TransmissionType transmissionType;
+    private ArrayList<Object> specialDetails;
 
     public Vehicle(String regnNumber, FuelType fuelType, TransmissionType transmissionType, double perDayRent) {
         this.regnNumber = regnNumber;
         this.fuelType = fuelType;
         this.transmissionType = transmissionType;
         this.perDayRent = perDayRent;
-        ;
+        this.specialDetails = specialDetails;
     }
 
     public String getRegnNumber() {
@@ -34,6 +36,11 @@ public class Vehicle {
 
     public double getPerDayRent() {
         return perDayRent;
+    }
+
+    public Vehicle setSpecialDetails(ArrayList<Object> specialDetails) {
+        this.specialDetails = specialDetails;
+        return this;
     }
 
     public void displayDetails() {

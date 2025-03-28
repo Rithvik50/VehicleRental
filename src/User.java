@@ -38,7 +38,7 @@ public class User {
         rentedVehicles.clear();
         
         String sql = "SELECT v.regnNumber, v.fuelType, v.transmissionType, v.perDayRent, v.specialDetails, rv.rental_date " +
-            "FROM RentedVehicles rv JOIN Vehicles v ON rv.vehicle_id = v.regnNumber " +
+            "FROM RentedVehicles rv JOIN Vehicle v ON rv.vehicle_id = v.regnNumber " +
             "WHERE rv.user_id = ? ORDER BY rv.rental_date ASC";
 
         try (Connection conn = DriverManager.getConnection(App.getDatabase()[0], App.getDatabase()[1], App.getDatabase()[2]);

@@ -184,7 +184,6 @@ public class Login extends MouseAdapter {
         } else if (pages == LOGIN_PAGES.REGISTER_PAGE) {
             if (mX >= 600 && mX <= 800 && mY >= 400 && mY <= 450) {
                 pages = LOGIN_PAGES.MENU_PAGE;
-                usernameField.setText("");
                 passwordField.setText("");
                 usernameField.setVisible(false);
                 passwordField.setVisible(false);
@@ -192,7 +191,6 @@ public class Login extends MouseAdapter {
         } else if (pages == LOGIN_PAGES.LOGIN_PAGE) {
             if (mX >= 600 && mX <= 800 && mY >= 400 && mY <= 450) {
                 pages = LOGIN_PAGES.MENU_PAGE;
-                usernameField.setText("");
                 passwordField.setText("");
                 usernameField.setVisible(false);
                 passwordField.setVisible(false);

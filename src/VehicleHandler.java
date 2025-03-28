@@ -16,6 +16,9 @@ public class VehicleHandler extends MouseAdapter {
     private ArrayList<Object> specialDetails;
     private JComboBox<String> v, f, t;
     private JComboBox<String> model, numberOfSeats, engineDisplacement, weight, numberOfAxles;
+    private int count;
+    private double rent;
+    private JTextField countField, rentField;
 
     enum VEHICLE_PAGES {
         SELECT_PAGE, SPECIAL_DETAILS
@@ -102,6 +105,14 @@ public class VehicleHandler extends MouseAdapter {
                 transmissionType = TransmissionType.AUTOMATIC;
             }
         });
+
+        countField = new JTextField(15);
+        countField.setBounds(600, 250, 200, 30);
+        countField.setVisible(false);
+
+        rentField = new JTextField(15);
+        rentField.setBounds(600, 350, 200, 30);
+        rentField.setVisible(false);
     }
 
     public void updateSpecialDetails() {

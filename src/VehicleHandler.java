@@ -107,6 +107,20 @@ public class VehicleHandler extends MouseAdapter {
     public void updateSpecialDetails() {
         pages = VEHICLE_PAGES.SPECIAL_DETAILS;
 
+        specialDetails.clear();
+
+        if (vehicleType.equals("Car")) {
+            specialDetails.add("");
+            specialDetails.add("");
+        } else if (vehicleType.equals("Bike")) {
+            specialDetails.add("");
+            specialDetails.add("");
+            specialDetails.add("");
+        } else if (vehicleType.equals("Truck")) {
+            specialDetails.add("");
+            specialDetails.add("");
+        }
+
         if (model == null) {
             model = new JComboBox<>();
             model.setBounds(400, 250, 200, 30);
@@ -149,129 +163,112 @@ public class VehicleHandler extends MouseAdapter {
         }
         weight.addItem("");
 
-        if (numberOfAxles == null) {
-            numberOfAxles = new JComboBox<>();
-            numberOfAxles.setBounds(800, 250, 200, 30);
-            numberOfAxles.setSelectedIndex(-1);
-            numberOfAxles.setVisible(false);
-            frame.add(numberOfAxles);
-        } else {
-            numberOfAxles.removeAllItems();
-        }
-        numberOfAxles.addItem("");
-
-        while (specialDetails.size() < 3) {
-            specialDetails.add("");
-        }
-
+        model.removeAllItems();
+        model.addItem("");
         if (vehicleType.equals("Car")) {
             model.addItem("SUV");
             model.addItem("Sedan");
             model.addItem("Hatchback");
-
-            numberOfSeats.addItem("2");
-            numberOfSeats.addItem("4");
-            numberOfSeats.addItem("5");
-
-            numberOfSeats.setVisible(true);
-            engineDisplacement.setVisible(false);
-            weight.setVisible(false);
-            numberOfAxles.setVisible(false);
         } else if (vehicleType.equals("Bike")) {
             model.addItem("Racing");
             model.addItem("Cruiser");
             model.addItem("City");
-
-            engineDisplacement.addItem("1000cc");
-            engineDisplacement.addItem("1500cc");
-            engineDisplacement.addItem("2000cc");
-
-            weight.addItem("1000kg");
-            weight.addItem("1500kg");
-            weight.addItem("2000kg");
-
-            engineDisplacement.setVisible(true);
-            weight.setVisible(true);
-            numberOfSeats.setVisible(false);
-            numberOfAxles.setVisible(false);
         } else if (vehicleType.equals("Truck")) {
             model.addItem("Flatbed");
             model.addItem("Heavy Duty");
             model.addItem("Light Duty");
             model.addItem("Box");
+        }
+        if (model.getItemCount() > 0) {
+            model.setSelectedIndex(0);  
+            model.setVisible(true);
+        } else {
+            model.setVisible(false);
+        }
 
+        numberOfSeats.removeAllItems();
+        numberOfSeats.addItem("");
+        if (vehicleType.equals("Car")) {
+            numberOfSeats.addItem("2");
+            numberOfSeats.addItem("4");
+            numberOfSeats.addItem("5");
+            numberOfSeats.setVisible(true);
+        } else {
+            numberOfSeats.setVisible(false);
+        }
+        numberOfSeats.setSelectedIndex(0);
+
+        engineDisplacement.removeAllItems();
+        engineDisplacement.addItem("");
+        if (vehicleType.equals("Bike")) {
+            engineDisplacement.addItem("1000cc");
+            engineDisplacement.addItem("1500cc");
+            engineDisplacement.addItem("2000cc");
+            engineDisplacement.setVisible(true);
+        } else {
+            engineDisplacement.setVisible(false);
+        }
+        engineDisplacement.setSelectedIndex(0);
+
+        weight.removeAllItems();
+        weight.addItem("");
+        if (vehicleType.equals("Bike")) {
+            weight.addItem("1000kg");
+            weight.addItem("1500kg");
+            weight.addItem("2000kg");
+            weight.setVisible(true);
+        } else {
+            weight.setVisible(false);
+        }
+        weight.setSelectedIndex(0);
+
+        numberOfAxles.removeAllItems();
+        numberOfAxles.addItem("");
+        if (vehicleType.equals("Truck")) {
             numberOfAxles.addItem("2");
             numberOfAxles.addItem("3");
             numberOfAxles.addItem("4");
-
             numberOfAxles.setVisible(true);
-            numberOfSeats.setVisible(false);
-            engineDisplacement.setVisible(false);
-            weight.setVisible(false);
+        } else {
+            numberOfAxles.setVisible(false);
         }
-
+        numberOfAxles.setSelectedIndex(0);
     
         model.addActionListener(e -> {
             String selectedModel = (String) model.getSelectedItem();
             if (selectedModel != null) {
-                if (specialDetails.isEmpty()) {
-                    specialDetails.add(selectedModel);
-                } else {
-                    specialDetails.set(0, selectedModel);
-                }
+                specialDetails.set(0, selectedModel);
             }
         });
-        model.setSelectedIndex(0);
-        model.setVisible(true);
-
+        
         numberOfSeats.addActionListener(e -> {
-            String selectedNumberOfSeats = (String) numberOfSeats.getSelectedItem();
-            if (selectedNumberOfSeats != null) {
-                while (specialDetails.size() < 2) {
-                    specialDetails.add("");
-                }
-                specialDetails.set(1, selectedNumberOfSeats);
+            String selectedSeats = (String) numberOfSeats.getSelectedItem();
+            if (selectedSeats != null && vehicleType.equals("Car")) {
+                specialDetails.set(1, selectedSeats);
             }
         });
-        numberOfSeats.setSelectedIndex(0);
-        numberOfSeats.setVisible(true);
-
+        
         engineDisplacement.addActionListener(e -> {
             String selectedEngine = (String) engineDisplacement.getSelectedItem();
-            if (selectedEngine != null) {
-                while (specialDetails.size() < 3) {
-                    specialDetails.add("");
-                }
+            if (selectedEngine != null && vehicleType.equals("Bike")) {
                 specialDetails.set(1, selectedEngine);
             }
         });
-        engineDisplacement.setSelectedIndex(0);
-        engineDisplacement.setVisible(true);
-
+        
         weight.addActionListener(e -> {
             String selectedWeight = (String) weight.getSelectedItem();
-            if (selectedWeight != null) {
-                while (specialDetails.size() < 3) {
-                    specialDetails.add("");
-                }
+            if (selectedWeight != null && vehicleType.equals("Bike")) {
                 specialDetails.set(2, selectedWeight);
             }
         });
-        weight.setSelectedIndex(0);
-        weight.setVisible(true);
-
+        
         numberOfAxles.addActionListener(e -> {
-            String selectedNumberOfAxles = (String) numberOfAxles.getSelectedItem();
-            if (selectedNumberOfAxles != null) {
-                while (specialDetails.size() < 2) {
-                    specialDetails.add("");
-
-                }
-                specialDetails.set(1, selectedNumberOfAxles);
+            String selectedAxles = (String) numberOfAxles.getSelectedItem();
+            if (selectedAxles != null && vehicleType.equals("Truck")) {
+                specialDetails.set(1, selectedAxles);
             }
         });
-        numberOfAxles.setSelectedIndex(0);
-        numberOfAxles.setVisible(true);
+        
     }
     
     public void finalizeVehicle() {
@@ -411,6 +408,7 @@ public class VehicleHandler extends MouseAdapter {
             textX = 800 + (200 - textWidth) / 2;
             textY = 500 + (50 + fm.getAscent()) / 2;
             g.setColor(Color.BLACK);
+            g.drawString("Back", textX, textY);
         }
     }
 }

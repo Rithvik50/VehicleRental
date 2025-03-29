@@ -322,19 +322,23 @@ public class VehicleHandler extends MouseAdapter {
             return;
         }
 
-        String sql = "INSERT INTO RentedVehicles (user_id, vehicle_id, rental_date) VALUES (?, ?, ?)";
+        if (Login.getActiveUser().isAdmin()) {
+            
+        } else {
+            String sql = "INSERT INTO RentedVehicles (user_id, vehicle_id, rental_date) VALUES (?, ?, ?)";
 
-        try (Connection conn = DriverManager.getConnection(App.getDatabase()[0], App.getDatabase()[1], App.getDatabase()[2]);
-             PreparedStatement stmt = conn.prepareStatement(sql)) {
+            try (Connection conn = DriverManager.getConnection(App.getDatabase()[0], App.getDatabase()[1], App.getDatabase()[2]);
+                PreparedStatement stmt = conn.prepareStatement(sql)) {
 
-            stmt.setString(1, Login.getActiveUser().getUserId());
-            stmt.setString(2, vehicle.getRegnNumber());
-            stmt.setTimestamp(3, java.sql.Timestamp.valueOf(LocalDate.now().atStartOfDay()));
+                stmt.setString(1, Login.getActiveUser().getUserId());
+                stmt.setString(2, vehicle.getRegnNumber());
+                stmt.setTimestamp(3, java.sql.Timestamp.valueOf(LocalDate.now().atStartOfDay()));
 
-            stmt.executeUpdate();
-            System.out.println("Vehicle stored in database successfully.");
-        } catch (SQLException e) {
-            e.printStackTrace();
+                stmt.executeUpdate();
+                System.out.println("Vehicle stored in database successfully.");
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
         }
     }
 

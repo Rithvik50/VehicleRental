@@ -16,7 +16,7 @@ public class VehicleHandler extends MouseAdapter {
     private ArrayList<Object> specialDetails;
     private JComboBox<String> v, f, t;
     private JComboBox<String> model, numberOfSeats, engineDisplacement, weight, numberOfAxles;
-    private JTextField countField, rentField;
+    private JTextField countField, rentField, regnNumberField;
 
     enum VEHICLE_PAGES {
         SELECT_PAGE, SPECIAL_DETAILS
@@ -62,13 +62,13 @@ public class VehicleHandler extends MouseAdapter {
         frame.add(numberOfSeats);
 
         engineDisplacement = new JComboBox<>();
-        engineDisplacement.setBounds(800, 250, 200, 30);
+        engineDisplacement.setBounds(600, 250, 200, 30);
         engineDisplacement.setSelectedIndex(-1);
         engineDisplacement.setVisible(false);
         frame.add(engineDisplacement);
 
         weight = new JComboBox<>();
-        weight.setBounds(1100, 250, 200, 30);
+        weight.setBounds(800, 250, 200, 30);
         weight.setSelectedIndex(-1);
         weight.setVisible(false);
         frame.add(weight);
@@ -113,6 +113,11 @@ public class VehicleHandler extends MouseAdapter {
         rentField.setBounds(600, 300, 200, 30);
         rentField.setVisible(false);
         frame.add(rentField);
+
+        regnNumberField = new JTextField(15);
+        regnNumberField.setBounds(600, 350, 200, 30);
+        regnNumberField.setVisible(false);
+        frame.add(regnNumberField);
     }
 
     public void updateSpecialDetails() {
@@ -299,13 +304,20 @@ public class VehicleHandler extends MouseAdapter {
             System.out.println("Please select all fields.");
             return;
         }
+
+        if (Login.getActiveUser().isAdmin()) {
+            if (countField.getText().isEmpty() || rentField.getText().isEmpty() || regnNumberField.getText().isEmpty()) {
+                System.out.println("Please select all fields.");
+                return;
+            }
+        }
     
         if (vehicleType.equals("Car")) {
-            vehicle = new Car("8998", fuelType, transmissionType, 1000.0);
+            vehicle = new Car(countField.getText(), fuelType, transmissionType, Double.parseDouble(rentField.getText()));
         } else if (vehicleType.equals("Bike")) {
-            vehicle = new Bike("8998", fuelType, transmissionType, 500.0);
+            vehicle = new Bike(countField.getText(), fuelType, transmissionType, Double.parseDouble(rentField.getText()));
         } else if (vehicleType.equals("Truck")) {
-            vehicle = new Truck("8998", fuelType, transmissionType, 2000.0);
+            vehicle = new Truck(countField.getText(), fuelType, transmissionType, Double.parseDouble(rentField.getText()));
         }
     
         if (vehicle != null) {
@@ -322,10 +334,11 @@ public class VehicleHandler extends MouseAdapter {
             return;
         }
 
+        String sql;
         if (Login.getActiveUser().isAdmin()) {
-            
+            sql = "INSERT INTO AvailableVehicles (vehicle_id, cost) VALUES (?, ?, ?, ?)";
         } else {
-            String sql = "INSERT INTO RentedVehicles (user_id, vehicle_id, rental_date) VALUES (?, ?, ?)";
+            sql = "INSERT INTO RentedVehicles (user_id, vehicle_id, rental_date) VALUES (?, ?, ?)";
 
             try (Connection conn = DriverManager.getConnection(App.getDatabase()[0], App.getDatabase()[1], App.getDatabase()[2]);
                 PreparedStatement stmt = conn.prepareStatement(sql)) {
@@ -404,9 +417,11 @@ public class VehicleHandler extends MouseAdapter {
                 countField.setVisible(true);
                 rentField.setVisible(true);
             }
+
             g.setColor(Color.WHITE);
             g.fillRect(400, 500, 200, 50);
             g.fillRect(800, 500, 200, 50);
+
             textWidth = fm.stringWidth("Add");
             textX = 400 + (200 - textWidth) / 2;
             textY = 500 + (50 + fm.getAscent()) / 2;
@@ -422,9 +437,22 @@ public class VehicleHandler extends MouseAdapter {
             v.setVisible(false);
             f.setVisible(false);
             t.setVisible(false);
+
             g.setColor(Color.WHITE);
             g.fillRect(400, 500, 200, 50);
             g.fillRect(800, 500, 200, 50);
+            if (vehicleType.equals("Car")) {
+                g.drawString("Car Type", 400, 230);
+                g.drawString("Number of Seats", 800, 230);
+            } else if (vehicleType.equals("Bike")) {
+                g.drawString("Bike Type", 400, 230);
+                g.drawString("Engine Displacement", 600, 230);
+                g.drawString("Weight", 800, 230);
+            } else if (vehicleType.equals("Truck")) {
+                g.drawString("Truck Type", 400, 230);
+                g.drawString("Number of Axles", 800, 230);
+            }
+
             textWidth = fm.stringWidth("Set");
             textX = 400 + (200 - textWidth) / 2;
             textY = 500 + (50 + fm.getAscent()) / 2;

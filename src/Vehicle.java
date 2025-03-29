@@ -49,6 +49,10 @@ public class Vehicle {
         return perDayRent;
     }
 
+    public ArrayList<Object> getSpecialDetails() {
+        return specialDetails;
+    }
+
     public Vehicle setSpecialDetails(ArrayList<Object> specialDetails) {
         this.specialDetails = specialDetails;
         return this;

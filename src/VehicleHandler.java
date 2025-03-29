@@ -109,10 +109,12 @@ public class VehicleHandler extends MouseAdapter {
         countField = new JTextField(15);
         countField.setBounds(600, 250, 200, 30);
         countField.setVisible(false);
+        frame.add(countField);
 
         rentField = new JTextField(15);
-        rentField.setBounds(600, 350, 200, 30);
+        rentField.setBounds(600, 300, 200, 30);
         rentField.setVisible(false);
+        frame.add(rentField);
     }
 
     public void updateSpecialDetails() {
@@ -292,6 +294,10 @@ public class VehicleHandler extends MouseAdapter {
         }
 
         if (vehicleType == null || fuelType == null || transmissionType == null) {
+            if (Login.getActiveUser().isAdmin() && (countField.getText().isEmpty() || rentField.getText().isEmpty())) {
+                System.out.println("Please select all fields.");
+                return;
+            }
             System.out.println("Please select all fields.");
             return;
         }
@@ -349,6 +355,8 @@ public class VehicleHandler extends MouseAdapter {
                 v.setSelectedIndex(0);
                 f.setSelectedIndex(0);
                 t.setSelectedIndex(0);
+                countField.setVisible(false);
+                rentField.setVisible(false);
                 finalizeVehicle();
                 App.setState(App.STATE.RENTAL);
             } else if (mX >= 800 && mX <= 1000 && mY >= 500 && mY <= 550) {
@@ -357,6 +365,8 @@ public class VehicleHandler extends MouseAdapter {
                 f.setVisible(false);
                 t.setVisible(false);
                 model.setVisible(false);
+                countField.setVisible(false);
+                rentField.setVisible(false);
                 vehicleType = null; fuelType = null; transmissionType = null;
                 specialDetails.clear();
                 App.setState(App.STATE.RENTAL);
@@ -388,6 +398,10 @@ public class VehicleHandler extends MouseAdapter {
             v.setVisible(true);
             f.setVisible(true);
             t.setVisible(true);
+            if (Login.getActiveUser().isAdmin()) {
+                countField.setVisible(true);
+                rentField.setVisible(true);
+            }
             g.setColor(Color.WHITE);
             g.fillRect(400, 500, 200, 50);
             g.fillRect(800, 500, 200, 50);

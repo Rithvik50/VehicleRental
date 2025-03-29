@@ -80,12 +80,25 @@ public class Rental extends MouseAdapter {
         int mX = e.getX();
         int mY = e.getY();
 
-        if (mX >= 600 && mX <= 800 && mY >= 300 && mY <= 350) {
-            window.handleMouseListeners(App.STATE.VEHICLE);
-            App.setState(App.STATE.VEHICLE);
-        } else if (mX >= 600 && mX <= 800 && mY >= 400 && mY <= 450) {
-            window.handleMouseListeners(App.STATE.PAYMENT);
-            App.setState(App.STATE.PAYMENT);
+        if (Login.getActiveUser().isAdmin()) {
+            if (mX >= 600 && mX <= 800 && mY >= 300 && mY <= 350) {
+                window.handleMouseListeners(App.STATE.VEHICLE);
+                App.setState(App.STATE.VEHICLE);
+            } else if (mX >= 600 && mX <= 800 && mY >= 400 && mY <= 450) {
+                window.handleMouseListeners(App.STATE.LOGIN);
+                App.setState(App.STATE.LOGIN);
+            }
+        } else {
+            if (mX >= 600 && mX <= 800 && mY >= 300 && mY <= 350) {
+                window.handleMouseListeners(App.STATE.VEHICLE);
+                App.setState(App.STATE.VEHICLE);
+            } else if (mX >= 600 && mX <= 800 && mY >= 400 && mY <= 450) {
+                window.handleMouseListeners(App.STATE.PAYMENT);
+                App.setState(App.STATE.PAYMENT);
+            } else if (mX >= 600 && mX <= 800 && mY >= 500 && mY <= 550) {
+                window.handleMouseListeners(App.STATE.LOGIN);
+                App.setState(App.STATE.LOGIN);
+            }
         }
     }
 
@@ -95,15 +108,23 @@ public class Rental extends MouseAdapter {
         int textWidth, textX, textY;
         if (Login.getActiveUser().isAdmin()) {
             g.fillRect(600, 300, 200, 50);
+            g.fillRect(600, 400, 200, 50);
 
             textWidth = fm.stringWidth("Add Vehicle");
             textX = 600 + (200 - textWidth) / 2;
             textY = 300 + (50 + fm.getAscent()) / 2;
             g.setColor(Color.BLACK);
             g.drawString("Add Vehicle", textX, textY);
+
+            textWidth = fm.stringWidth("Back");
+            textX = 600 + (200 - textWidth) / 2;
+            textY = 400 + (50 + fm.getAscent()) / 2;
+            g.setColor(Color.BLACK);
+            g.drawString("Back", textX, textY);
         } else {
             g.fillRect(600, 300, 200, 50);
             g.fillRect(600, 400, 200, 50);
+            g.fillRect(600, 500, 200, 50);
 
             textWidth = fm.stringWidth("Select Vehicles");
             textX = 600 + (200 - textWidth) / 2;
@@ -115,6 +136,12 @@ public class Rental extends MouseAdapter {
             textX = 600 + (200 - textWidth) / 2;
             textY = 400 + (50 + fm.getAscent()) / 2;
             g.drawString("Payment", textX, textY);
+
+            textWidth = fm.stringWidth("Back");
+            textX = 600 + (200 - textWidth) / 2;
+            textY = 500 + (50 + fm.getAscent()) / 2;
+            g.setColor(Color.BLACK);
+            g.drawString("Back", textX, textY);
         }
     }
 }

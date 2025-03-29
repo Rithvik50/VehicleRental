@@ -11,7 +11,7 @@ public class Login extends MouseAdapter {
     private static User activeUser;
     private boolean loggedIn = false;
 
-    private JTextField usernameField;
+    private JTextField usernameField, insuranceField;
     private JPasswordField passwordField;
     private JFrame frame;
 
@@ -33,19 +33,16 @@ public class Login extends MouseAdapter {
         usernameField.setBounds(600, 250, 200, 30);
         usernameField.setVisible(false);
 
+        insuranceField = new JTextField(15);
+        insuranceField.setBounds(600, 350, 200, 30);
+        insuranceField.setVisible(false);
+
         passwordField = new JPasswordField(15);
         passwordField.setBounds(600, 300, 200, 30);
         passwordField.setVisible(false);
 
-        passwordField.addActionListener(e -> {
-            if (pages == LOGIN_PAGES.LOGIN_PAGE) {
-                handleLogin();
-            } else if (pages == LOGIN_PAGES.REGISTER_PAGE) {
-                handleRegister();
-            }
-        });
-
         frame.add(usernameField);
+        frame.add(insuranceField);
         frame.add(passwordField);
     }
 
@@ -71,6 +68,7 @@ public class Login extends MouseAdapter {
                         pages = LOGIN_PAGES.MENU_PAGE;
     
                         usernameField.setVisible(false);
+                        insuranceField.setVisible(false);
                         passwordField.setVisible(false);
                     } else {
                         JOptionPane.showMessageDialog(frame, "Invalid username or password!", "Login Failed", JOptionPane.ERROR_MESSAGE);
@@ -90,6 +88,7 @@ public class Login extends MouseAdapter {
 
     private void handleRegister() {
         String username = usernameField.getText();
+        String insurance = insuranceField.getText();
         String password = new String(passwordField.getPassword());
     
         try (Connection conn = DriverManager.getConnection(App.getDatabase()[0], App.getDatabase()[1], App.getDatabase()[2])) {
@@ -107,16 +106,18 @@ public class Login extends MouseAdapter {
             String salt = generateSalt();
             String hash = hashPassword(password, salt);
     
-            String insertQuery = "INSERT INTO User (username, hash, salt) VALUES (?, ?, ?)";
+            String insertQuery = "INSERT INTO User (username, hash, salt, insurance) VALUES (?, ?, ?, ?)";
             try (PreparedStatement insertStmt = conn.prepareStatement(insertQuery)) {
                 insertStmt.setString(1, username);
                 insertStmt.setString(2, hash);
                 insertStmt.setString(3, salt);
+                insertStmt.setString(4, insurance);
                 insertStmt.executeUpdate();
                 JOptionPane.showMessageDialog(frame, "Registration successful!", "Success", JOptionPane.INFORMATION_MESSAGE);
                 pages = LOGIN_PAGES.MENU_PAGE;
     
                 usernameField.setVisible(false);
+                insuranceField.setVisible(false);
                 passwordField.setVisible(false);
             }
         } catch (SQLException ex) {
@@ -125,6 +126,7 @@ public class Login extends MouseAdapter {
         }
     
         usernameField.setText("");
+        insuranceField.setText("");
         passwordField.setText("");
     }    
 
@@ -175,27 +177,38 @@ public class Login extends MouseAdapter {
                     pages = LOGIN_PAGES.LOGIN_PAGE;
                     usernameField.setVisible(true);
                     passwordField.setVisible(true);
+                    insuranceField.setVisible(false); // Hide insurance field for login
                 } else if (mX >= 600 && mX <= 800 && mY >= 400 && mY <= 450) {
                     pages = LOGIN_PAGES.REGISTER_PAGE;
                     usernameField.setVisible(true);
+                    insuranceField.setVisible(true);
                     passwordField.setVisible(true);
                 }
             }
         } else if (pages == LOGIN_PAGES.REGISTER_PAGE) {
-            if (mX >= 600 && mX <= 800 && mY >= 400 && mY <= 450) {
+            if (mX >= 400 && mX <= 600 && mY >= 400 && mY <= 450) { // Corrected position for "Enter"
+                handleRegister(); // Call register function
+            } else if (mX >= 800 && mX <= 1000 && mY >= 400 && mY <= 450) {
                 pages = LOGIN_PAGES.MENU_PAGE;
-                passwordField.setText("");
-                usernameField.setVisible(false);
-                passwordField.setVisible(false);
+                clearFields();
             }
         } else if (pages == LOGIN_PAGES.LOGIN_PAGE) {
-            if (mX >= 600 && mX <= 800 && mY >= 400 && mY <= 450) {
+            if (mX >= 400 && mX <= 600 && mY >= 400 && mY <= 450) { // Corrected position for "Enter"
+                handleLogin(); // Call login function
+            } else if (mX >= 800 && mX <= 1000 && mY >= 400 && mY <= 450) {
                 pages = LOGIN_PAGES.MENU_PAGE;
-                passwordField.setText("");
-                usernameField.setVisible(false);
-                passwordField.setVisible(false);
+                clearFields();
             }
         }
+    }
+
+    private void clearFields() {
+        usernameField.setText("");
+        passwordField.setText("");
+        insuranceField.setText("");
+        usernameField.setVisible(false);
+        insuranceField.setVisible(false);
+        passwordField.setVisible(false);
     }
 
     public void render(Graphics g) {
@@ -243,10 +256,17 @@ public class Login extends MouseAdapter {
                 g.drawString("Register", textX, textY);
             }
         } else if (pages == LOGIN_PAGES.LOGIN_PAGE) {
-            g.fillRect(600, 400, 200, 50);
+            g.fillRect(400, 400, 200, 50);
+            g.fillRect(800, 400, 200, 50);
+
+            textWidth = fm.stringWidth("Enter");
+            textX = 400 + (200 - textWidth) / 2;
+            textY = 400 + (50 + fm.getAscent()) / 2;
+            g.setColor(Color.BLACK);
+            g.drawString("Enter", textX, textY);
 
             textWidth = fm.stringWidth("Back");
-            textX = 600 + (200 - textWidth) / 2;
+            textX = 800 + (200 - textWidth) / 2;
             textY = 400 + (50 + fm.getAscent()) / 2;
             g.setColor(Color.BLACK);
             g.drawString("Back", textX, textY);
@@ -255,16 +275,24 @@ public class Login extends MouseAdapter {
             g.drawString("Username:", 600, 240);
             g.drawString("Password:", 600, 290);
         } else if (pages == LOGIN_PAGES.REGISTER_PAGE) {
-            g.fillRect(600, 400, 200, 50);
+            g.fillRect(400, 400, 200, 50);
+            g.fillRect(800, 400, 200, 50);
+
+            textWidth = fm.stringWidth("Enter");
+            textX = 400 + (200 - textWidth) / 2;
+            textY = 400 + (50 + fm.getAscent()) / 2;
+            g.setColor(Color.BLACK);
+            g.drawString("Enter", textX, textY);
 
             textWidth = fm.stringWidth("Back");
-            textX = 600 + (200 - textWidth) / 2;
+            textX = 800 + (200 - textWidth) / 2;
             textY = 400 + (50 + fm.getAscent()) / 2;
             g.setColor(Color.BLACK);
             g.drawString("Back", textX, textY);
 
             g.setColor(Color.WHITE);
             g.drawString("Username:", 600, 240);
+            g.drawString("Insurance:", 600, 340);
             g.drawString("Password:", 600, 290);
         }
     }

@@ -16,8 +16,6 @@ public class VehicleHandler extends MouseAdapter {
     private ArrayList<Object> specialDetails;
     private JComboBox<String> v, f, t;
     private JComboBox<String> model, numberOfSeats, engineDisplacement, weight, numberOfAxles;
-    private int count;
-    private double rent;
     private JTextField countField, rentField;
 
     enum VEHICLE_PAGES {
@@ -253,7 +251,7 @@ public class VehicleHandler extends MouseAdapter {
                 specialDetails.set(0, selectedModel);
             }
         });
-        
+
         numberOfSeats.addActionListener(e -> {
             String selectedSeats = (String) numberOfSeats.getSelectedItem();
             if (selectedSeats != null && vehicleType.equals("Car")) {

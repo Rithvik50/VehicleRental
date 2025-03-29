@@ -137,7 +137,7 @@ public class Login extends MouseAdapter {
         return Base64.getEncoder().encodeToString(salt);
     }
 
-    // Hashes the password using SHA-256 with salt
+    // Hashes the password using SHA(Secure Hashing Algorithm)-256 with salt
     private String hashPassword(String password, String salt) {
         try {
             MessageDigest digest = MessageDigest.getInstance("SHA-256");
@@ -177,7 +177,7 @@ public class Login extends MouseAdapter {
                     pages = LOGIN_PAGES.LOGIN_PAGE;
                     usernameField.setVisible(true);
                     passwordField.setVisible(true);
-                    insuranceField.setVisible(false); // Hide insurance field for login
+                    insuranceField.setVisible(false);
                 } else if (mX >= 600 && mX <= 800 && mY >= 400 && mY <= 450) {
                     pages = LOGIN_PAGES.REGISTER_PAGE;
                     usernameField.setVisible(true);
@@ -186,15 +186,15 @@ public class Login extends MouseAdapter {
                 }
             }
         } else if (pages == LOGIN_PAGES.REGISTER_PAGE) {
-            if (mX >= 400 && mX <= 600 && mY >= 400 && mY <= 450) { // Corrected position for "Enter"
-                handleRegister(); // Call register function
+            if (mX >= 400 && mX <= 600 && mY >= 400 && mY <= 450) {
+                handleRegister();
             } else if (mX >= 800 && mX <= 1000 && mY >= 400 && mY <= 450) {
                 pages = LOGIN_PAGES.MENU_PAGE;
                 clearFields();
             }
         } else if (pages == LOGIN_PAGES.LOGIN_PAGE) {
-            if (mX >= 400 && mX <= 600 && mY >= 400 && mY <= 450) { // Corrected position for "Enter"
-                handleLogin(); // Call login function
+            if (mX >= 400 && mX <= 600 && mY >= 400 && mY <= 450) {
+                handleLogin();
             } else if (mX >= 800 && mX <= 1000 && mY >= 400 && mY <= 450) {
                 pages = LOGIN_PAGES.MENU_PAGE;
                 clearFields();

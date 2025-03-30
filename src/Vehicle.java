@@ -44,6 +44,10 @@ public class Vehicle {
         return startDate;
     }
 
+    public LocalDate getReturnDate() {
+        return startDate.plusMonths(1);
+    }
+
     public double getPerDayRent() {
         return perDayRent;
     }

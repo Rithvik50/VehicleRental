@@ -9,6 +9,13 @@ public class Vehicle {
     private TransmissionType transmissionType;
     private ArrayList<Object> specialDetails;
 
+    public Vehicle(FuelType fuelType, TransmissionType transmissionType) {
+        this.regnNumber = null;
+        this.fuelType = fuelType;
+        this.transmissionType = transmissionType;
+        this.perDayRent = 0.0;
+    }
+
     public Vehicle(String regnNumber, FuelType fuelType, TransmissionType transmissionType, double perDayRent) {
         this.regnNumber = regnNumber;
         this.fuelType = fuelType;

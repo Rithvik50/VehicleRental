@@ -7,6 +7,10 @@ public class Bike extends Vehicle {
     private int engineDisplacement;
     private double weight;
 
+    public Bike(FuelType fuelType, TransmissionType transmissionType) {
+        super(fuelType, transmissionType);
+    }
+
     public Bike(String regnNumber, FuelType fuelType, TransmissionType transmissionType, double perDayRent) {
         super(regnNumber, fuelType, transmissionType, perDayRent);
     }

@@ -288,36 +288,43 @@ public class VehicleHandler extends MouseAdapter {
     }
     
     public void finalizeVehicle() {
+        String count = countField.getText();
+        String rent = rentField.getText();
+        String regnNumber = regnNumberField.getText();
+        
         if (specialDetails.isEmpty() || 
             (vehicleType.equals("Car") && specialDetails.size() < 2) ||
             (vehicleType.equals("Bike") && specialDetails.size() < 3) ||
             (vehicleType.equals("Truck") && specialDetails.size() < 2)) {
-            System.out.println("Please select all options before finalizing the vehicle.");
+            JOptionPane.showMessageDialog(frame, "Please select all fields!", "Error", JOptionPane.ERROR_MESSAGE);
             return;
         }
 
         if (vehicleType == null || fuelType == null || transmissionType == null) {
-            if (Login.getActiveUser().isAdmin() && (countField.getText().isEmpty() || rentField.getText().isEmpty())) {
-                System.out.println("Please select all fields.");
+            if (Login.getActiveUser().isAdmin() && (count == null || rent == null || regnNumber == null)) {
+                JOptionPane.showMessageDialog(frame, "Please select all fields!", "Error", JOptionPane.ERROR_MESSAGE);
                 return;
             }
-            System.out.println("Please select all fields.");
+            JOptionPane.showMessageDialog(frame, "Please select all fields!", "Error", JOptionPane.ERROR_MESSAGE);
             return;
         }
 
         if (Login.getActiveUser().isAdmin()) {
-            if (countField.getText().isEmpty() || rentField.getText().isEmpty() || regnNumberField.getText().isEmpty()) {
-                System.out.println("Please select all fields.");
-                return;
+            if (vehicleType.equals("Car")) {
+                vehicle = new Car(regnNumber, fuelType, transmissionType, Double.parseDouble(rent));
+            } else if (vehicleType.equals("Bike")) {
+                vehicle = new Bike(regnNumber, fuelType, transmissionType, Double.parseDouble(rent));
+            } else if (vehicleType.equals("Truck")) {
+                vehicle = new Truck(regnNumber, fuelType, transmissionType, Double.parseDouble(rent));
             }
-        }
-    
-        if (vehicleType.equals("Car")) {
-            vehicle = new Car(countField.getText(), fuelType, transmissionType, Double.parseDouble(rentField.getText()));
-        } else if (vehicleType.equals("Bike")) {
-            vehicle = new Bike(countField.getText(), fuelType, transmissionType, Double.parseDouble(rentField.getText()));
-        } else if (vehicleType.equals("Truck")) {
-            vehicle = new Truck(countField.getText(), fuelType, transmissionType, Double.parseDouble(rentField.getText()));
+        } else {
+            if (vehicleType.equals("Car")) {
+                vehicle = new Car(fuelType, transmissionType);
+            } else if (vehicleType.equals("Bike")) {
+                vehicle = new Bike(fuelType, transmissionType);
+            } else if (vehicleType.equals("Truck")) {
+                vehicle = new Truck(fuelType, transmissionType);
+            }
         }
     
         if (vehicle != null) {

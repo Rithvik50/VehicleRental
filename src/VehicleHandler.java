@@ -33,13 +33,13 @@ public class VehicleHandler extends MouseAdapter {
 
         v = new JComboBox<>(new String[]{"", "Car", "Bike", "Truck"});
         v.setBounds(600, 150, 200, 30);
-        v.setSelectedIndex(0);
+        v.setSelectedIndex(-1);
         v.setVisible(false);
         frame.add(v);
 
         f = new JComboBox<>(new String[]{"", "Petrol", "Diesel", "Electric"});
         f.setBounds(600, 390, 200, 30);
-        f.setSelectedIndex(0);
+        f.setSelectedIndex(-1);
         f.setVisible(false);
         frame.add(f);
 
@@ -343,7 +343,7 @@ public class VehicleHandler extends MouseAdapter {
 
         String sql;
         if (Login.getActiveUser().isAdmin()) {
-            sql = "INSERT INTO AvailableVehicles (vehicle_id, cost) VALUES (?, ?, ?, ?)";
+            sql = "INSERT INTO AvailableVehicles (vehicle_id, cost) VALUES (?, ?)";
         } else {
             sql = "INSERT INTO RentedVehicles (user_id, vehicle_id, rental_date) VALUES (?, ?, ?)";
 

@@ -394,7 +394,15 @@ public class VehicleHandler extends MouseAdapter {
                 App.setState(App.STATE.RENTAL);
             }
         } else if (pages == VEHICLE_PAGES.SPECIAL_DETAILS) {
-            if (mX >= 800 && mX <= 1000 && mY >= 500 && mY <= 550) {
+            if (mX >= 400 && mX <= 600 && mY >= 500 && mY <= 550) {
+                model.setVisible(false);
+                numberOfSeats.setVisible(false);
+                engineDisplacement.setVisible(false);
+                weight.setVisible(false);
+                numberOfAxles.setVisible(false);
+
+                pages = VEHICLE_PAGES.SELECT_PAGE;
+            } else if (mX >= 800 && mX <= 1000 && mY >= 500 && mY <= 550) {
                 model.setVisible(false);
                 numberOfSeats.setVisible(false);
                 engineDisplacement.setVisible(false);

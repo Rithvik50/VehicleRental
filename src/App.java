@@ -6,10 +6,6 @@ public class App {
 	}
 
     private static STATE state = STATE.LOGIN;
-    
-    public App() {
-        new Window();
-    }
 
     public static String[] getDatabase() {
         return database;
@@ -24,6 +20,6 @@ public class App {
     }
 
     public static void main(String[] args) {
-        new App();
+        new Window();
     }
 }

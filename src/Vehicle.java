@@ -5,7 +5,7 @@ public class Vehicle {
     private String regnNumber;
     private FuelType fuelType;
     private double perDayRent;
-    private LocalDate startDate, endDate;
+    private LocalDate startDate;
     private TransmissionType transmissionType;
     private ArrayList<Object> specialDetails;
 

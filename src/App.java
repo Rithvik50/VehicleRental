@@ -2,7 +2,7 @@ public class App {
     private static final String[] database = {"jdbc:mysql://localhost:3306/VehicleRentalSystem", "root", "Thealamo13"};
 
 	enum STATE {
-		LOGIN, RENTAL, VEHICLE, PAYMENT;
+		LOGIN, RENTAL, VEHICLE, PAYMENT, CART;
 	}
 
     private static STATE state = STATE.LOGIN;

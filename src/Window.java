@@ -9,6 +9,7 @@ public class Window extends JPanel implements ActionListener {
     private Rental rs;
     private VehicleHandler vh;
     private Payment payment;
+    private Cart cart;
     private double angle = 0;
     private Timer timer;
     
@@ -43,21 +44,31 @@ public class Window extends JPanel implements ActionListener {
             this.removeMouseListener(rs);
             this.removeMouseListener(vh);
             this.removeMouseListener(payment);
+            this.removeMouseListener(cart);
         } else if (state == App.STATE.RENTAL) {
             this.addMouseListener(rs);
             this.removeMouseListener(login);
             this.removeMouseListener(vh);
             this.removeMouseListener(payment);
+            this.removeMouseListener(cart);
         } else if (state == App.STATE.VEHICLE) {
             this.addMouseListener(vh);
             this.removeMouseListener(login);
             this.removeMouseListener(rs);
             this.removeMouseListener(payment);
+            this.removeMouseListener(cart);
         } else if (state == App.STATE.PAYMENT) {
             this.addMouseListener(payment);
             this.removeMouseListener(login);
             this.removeMouseListener(vh);
             this.removeMouseListener(rs);
+            this.removeMouseListener(cart);
+        } else if (state == App.STATE.CART) {
+            this.addMouseListener(cart);
+            this.removeMouseListener(login);
+            this.removeMouseListener(rs);
+            this.removeMouseListener(vh);
+            this.removeMouseListener(payment);
         }
     }
 
@@ -88,6 +99,8 @@ public class Window extends JPanel implements ActionListener {
             vh.render(g);
         } else if (App.getState() == App.STATE.PAYMENT) {
             payment.render(g);
+        } else if (App.getState() == App.STATE.CART) {
+            cart.render(g);
         }
     }
         

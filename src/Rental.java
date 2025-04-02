@@ -96,6 +96,9 @@ public class Rental extends MouseAdapter {
                 window.handleMouseListeners(App.STATE.PAYMENT);
                 App.setState(App.STATE.PAYMENT);
             } else if (mX >= 600 && mX <= 800 && mY >= 500 && mY <= 550) {
+                window.handleMouseListeners(App.STATE.CART);
+                App.setState(App.STATE.CART);
+            } else if (mX >= 600 && mX <= 800 && mY >= 600 && mY <= 650) {
                 window.handleMouseListeners(App.STATE.LOGIN);
                 App.setState(App.STATE.LOGIN);
             }
@@ -125,6 +128,7 @@ public class Rental extends MouseAdapter {
             g.fillRect(600, 300, 200, 50);
             g.fillRect(600, 400, 200, 50);
             g.fillRect(600, 500, 200, 50);
+            g.fillRect(600, 600, 200, 50);
 
             textWidth = fm.stringWidth("Select Vehicles");
             textX = 600 + (200 - textWidth) / 2;
@@ -137,9 +141,15 @@ public class Rental extends MouseAdapter {
             textY = 400 + (50 + fm.getAscent()) / 2;
             g.drawString("Payment", textX, textY);
 
-            textWidth = fm.stringWidth("Back");
+            textWidth = fm.stringWidth("View Cart");
             textX = 600 + (200 - textWidth) / 2;
             textY = 500 + (50 + fm.getAscent()) / 2;
+            g.setColor(Color.BLACK);
+            g.drawString("View Cart", textX, textY);
+
+            textWidth = fm.stringWidth("Back");
+            textX = 600 + (200 - textWidth) / 2;
+            textY = 600 + (50 + fm.getAscent()) / 2;
             g.setColor(Color.BLACK);
             g.drawString("Back", textX, textY);
         }

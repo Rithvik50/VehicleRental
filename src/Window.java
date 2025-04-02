@@ -24,6 +24,7 @@ public class Window extends JPanel implements ActionListener {
         rs = new Rental(this);
         vh = new VehicleHandler(frame, this);
         payment = new Payment(frame, this);
+        cart = new Cart(this);
 
         this.addMouseListener(login);
 

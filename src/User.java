@@ -37,9 +37,8 @@ public class User {
     public List<Vehicle> getRentedVehicles() {
         rentedVehicles.clear();
         
-        String sql = "SELECT v.regnNumber, v.fuelType, v.transmissionType, v.perDayRent, v.specialDetails, rv.rental_date " +
-            "FROM RentedVehicles rv JOIN Vehicle v ON rv.vehicle_id = v.regnNumber " +
-            "WHERE rv.user_id = ? ORDER BY rv.rental_date ASC";
+        String sql = "SELECT regn_number, fuel_type, transmission_type, rent, special_details, rental_date FROM Vehicle " +
+                    "WHERE user_id = ? ORDER BY rental_date ASC";
 
         try (Connection conn = DriverManager.getConnection(App.getDatabase()[0], App.getDatabase()[1], App.getDatabase()[2]);
             PreparedStatement stmt = conn.prepareStatement(sql)) {
@@ -49,11 +48,11 @@ public class User {
     
             while (rs.next()) {
                 Vehicle vehicle = new Vehicle(
-                    rs.getString("regnNumber"),
-                    FuelType.fromValue(rs.getString("fuelType")),
-                    TransmissionType.fromValue(rs.getString("transmissionType")),
-                    rs.getDouble("perDayRent")
-                ).setSpecialDetails(new Gson().fromJson(rs.getString("specialDetails"), new TypeToken<ArrayList<Object>>() {}.getType()));
+                    rs.getString("regn_number"),
+                    FuelType.fromValue(rs.getString("fuel_type")),
+                    TransmissionType.fromValue(rs.getString("transmission_type")),
+                    rs.getDouble("rent")
+                ).setSpecialDetails(new Gson().fromJson(rs.getString("special_details"), new TypeToken<ArrayList<Object>>() {}.getType()));
                 rentedVehicles.add(vehicle);
             }
         } catch (SQLException e) {

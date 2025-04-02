@@ -17,6 +17,7 @@ public class VehicleHandler extends MouseAdapter {
     private JComboBox<String> v, f, t;
     private JComboBox<String> model, numberOfSeats, engineDisplacement, weight, numberOfAxles;
     private JTextField countField, rentField, regnNumberField;
+    private String count, rent, regnNumber;
 
     enum VEHICLE_PAGES {
         SELECT_PAGE, SPECIAL_DETAILS
@@ -447,13 +448,14 @@ public class VehicleHandler extends MouseAdapter {
                 break;
         }
         
+        // Debug log to verify values are being saved
         System.out.println("Saved special details: " + specialDetails);
     }
     
     public boolean finalizeVehicle() {
-        String count = countField.getText();
-        String rent = rentField.getText();
-        String regnNumber = regnNumberField.getText();
+        count = countField.getText();
+        rent = rentField.getText();
+        regnNumber = regnNumberField.getText();
         
         if (vehicleType == null || fuelType == null || transmissionType == null) {
             JOptionPane.showMessageDialog(frame, "Please select vehicle type, fuel type, and transmission type!", 
@@ -500,19 +502,19 @@ public class VehicleHandler extends MouseAdapter {
             }
             
             if (vehicleType.equals("Car")) {
-                vehicle = new Car(regnNumber, fuelType, transmissionType, Double.parseDouble(rent));
+                vehicle = new Car(regnNumber, fuelType, transmissionType, Double.parseDouble(rent)).setSpecialDetails(specialDetails);
             } else if (vehicleType.equals("Bike")) {
-                vehicle = new Bike(regnNumber, fuelType, transmissionType, Double.parseDouble(rent));
+                vehicle = new Bike(regnNumber, fuelType, transmissionType, Double.parseDouble(rent)).setSpecialDetails(specialDetails);
             } else if (vehicleType.equals("Truck")) {
-                vehicle = new Truck(regnNumber, fuelType, transmissionType, Double.parseDouble(rent));
+                vehicle = new Truck(regnNumber, fuelType, transmissionType, Double.parseDouble(rent)).setSpecialDetails(specialDetails);
             }
         } else {
             if (vehicleType.equals("Car")) {
-                vehicle = new Car(fuelType, transmissionType);
+                vehicle = new Car(fuelType, transmissionType).setSpecialDetails(specialDetails);
             } else if (vehicleType.equals("Bike")) {
-                vehicle = new Bike(fuelType, transmissionType);
+                vehicle = new Bike(fuelType, transmissionType).setSpecialDetails(specialDetails);
             } else if (vehicleType.equals("Truck")) {
-                vehicle = new Truck(fuelType, transmissionType);
+                vehicle = new Truck(fuelType, transmissionType).setSpecialDetails(specialDetails);
             }
         }
     
@@ -535,6 +537,18 @@ public class VehicleHandler extends MouseAdapter {
         String sql;
         if (Login.getActiveUser().isAdmin()) {
             sql = "INSERT INTO AvailableVehicles (vehicle_id, cost) VALUES (?, ?)";
+
+            try (Connection conn = DriverManager.getConnection(App.getDatabase()[0], App.getDatabase()[1], App.getDatabase()[2]);
+                PreparedStatement stmt = conn.prepareStatement(sql)) {
+
+                stmt.setString(1, regnNumber);
+                stmt.setString(2, rent);
+
+                stmt.executeUpdate();
+                System.out.println("Vehicle stored in database successfully.");
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
         } else {
             sql = "INSERT INTO RentedVehicles (user_id, vehicle_id, rental_date) VALUES (?, ?, ?)";
 

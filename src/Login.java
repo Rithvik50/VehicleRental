@@ -1,7 +1,6 @@
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
+import java.awt.event.*;
 import java.security.MessageDigest;
 import java.security.SecureRandom;
 import java.sql.*;
@@ -40,6 +39,13 @@ public class Login extends MouseAdapter {
         passwordField = new JPasswordField(15);
         passwordField.setBounds(600, 300, 200, 30);
         passwordField.setVisible(false);
+        passwordField.addActionListener(e -> {
+            if (pages == LOGIN_PAGES.LOGIN_PAGE) {
+                handleLogin();
+            } else if (pages == LOGIN_PAGES.REGISTER_PAGE) {
+                handleRegister();
+            }
+        });
 
         frame.add(usernameField);
         frame.add(insuranceField);

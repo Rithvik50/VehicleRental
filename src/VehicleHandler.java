@@ -592,7 +592,7 @@ public class VehicleHandler extends MouseAdapter {
                 String detailsStr = sb.length() > 0 ? sb.substring(0, sb.length() - 1) : "";
                 
                 stmt.setString(4, detailsStr);
-                stmt.setDate(5, java.sql.Date.valueOf(LocalDate.now()));
+                stmt.setDate(5, Date.valueOf(LocalDate.now()));
                 stmt.setString(6, Login.getActiveUser().getUserId());
                 
                 int rowsAffected = stmt.executeUpdate();

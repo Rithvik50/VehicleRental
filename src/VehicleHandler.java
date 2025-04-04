@@ -1,10 +1,9 @@
 import java.awt.*;
 import java.awt.event.*;
 import java.sql.*;
+import javax.swing.*;
 import java.time.LocalDate;
 import java.util.ArrayList;
-
-import javax.swing.*;
 
 public class VehicleHandler extends MouseAdapter {
     private Window window;
@@ -502,11 +501,21 @@ public class VehicleHandler extends MouseAdapter {
             }
             
             if (vehicleType.equals("Car")) {
-                vehicle = new Car(regnNumber, fuelType, transmissionType, Double.parseDouble(rent)).setSpecialDetails(specialDetails);
+                Car.CarType carType = specialDetails.get(0) == null ? null : (Car.CarType) specialDetails.get(0);
+                int numberOfSeats = specialDetails.get(1) == null ? 0 : Integer.parseInt((String) specialDetails.get(1));
+                vehicle = new Car(regnNumber, fuelType, transmissionType, Double.parseDouble(rent))
+                        .setCarType(carType).setNumberOfSeats(numberOfSeats).setSpecialDetails(specialDetails);
             } else if (vehicleType.equals("Bike")) {
-                vehicle = new Bike(regnNumber, fuelType, transmissionType, Double.parseDouble(rent)).setSpecialDetails(specialDetails);
+                Bike.BikeType bikeType = specialDetails.get(0) == null ? null : (Bike.BikeType) specialDetails.get(0);
+                int engineDisplacement = specialDetails.get(1) == null ? 0 : Integer.parseInt((String) specialDetails.get(1));
+                double weight = specialDetails.get(2) == null ? 0 : Double.parseDouble((String) specialDetails.get(2));
+                vehicle = new Bike(regnNumber, fuelType, transmissionType, Double.parseDouble(rent))
+                        .setBikeType(bikeType).setEngineDisplacement(engineDisplacement).setWeight(weight).setSpecialDetails(specialDetails);
             } else if (vehicleType.equals("Truck")) {
-                vehicle = new Truck(regnNumber, fuelType, transmissionType, Double.parseDouble(rent)).setSpecialDetails(specialDetails);
+                Truck.TruckType truckType = specialDetails.get(0) == null ? null : (Truck.TruckType) specialDetails.get(0);
+                int numberOfAxles = specialDetails.get(1) == null ? 0 : Integer.parseInt((String) specialDetails.get(1));
+                vehicle = new Truck(regnNumber, fuelType, transmissionType, Double.parseDouble(rent))
+                        .setTruckType(truckType).setNumberOfAxles(numberOfAxles).setSpecialDetails(specialDetails);
             }
         } else {
             if (vehicleType.equals("Car")) {
@@ -533,37 +542,72 @@ public class VehicleHandler extends MouseAdapter {
             System.out.println("No vehicle to store.");
             return;
         }
+        
+        try (Connection conn = DriverManager.getConnection(App.getDatabase()[0], App.getDatabase()[1], App.getDatabase()[2])) {
+            PreparedStatement stmt;
+            String sql;
 
-        String sql;
-        if (Login.getActiveUser().isAdmin()) {
-            sql = "INSERT INTO AvailableVehicles (vehicle_id, cost) VALUES (?, ?)";
-
-            try (Connection conn = DriverManager.getConnection(App.getDatabase()[0], App.getDatabase()[1], App.getDatabase()[2]);
-                PreparedStatement stmt = conn.prepareStatement(sql)) {
-
-                stmt.setString(1, regnNumber);
-                stmt.setString(2, rent);
-
-                stmt.executeUpdate();
-                System.out.println("Vehicle stored in database successfully.");
-            } catch (SQLException e) {
-                e.printStackTrace();
+            if (Login.getActiveUser().isAdmin()) {
+                sql = "INSERT INTO Vehicle (regn_number, fuel_type, transmission_type, rent, " +
+                             "special_details, count) VALUES (?, ?, ?, ?, ?, ?)";
+                             
+                stmt = conn.prepareStatement(sql);
+                stmt.setString(1, vehicle.getRegnNumber());
+                stmt.setString(2, vehicle.getFuelType().toString());
+                stmt.setString(3, vehicle.getTransmissionType().toString());
+                stmt.setDouble(4, vehicle.getPerDayRent());
+                
+                StringBuilder sb = new StringBuilder();
+                for (Object detail : specialDetails) {
+                    sb.append(detail.toString()).append(",");
+                }
+                String detailsStr = sb.length() > 0 ? sb.substring(0, sb.length() - 1) : "";
+                
+                stmt.setString(5, detailsStr);
+                stmt.setInt(6, Integer.parseInt(count));
+                
+                int rowsAffected = stmt.executeUpdate();
+                if (rowsAffected > 0) {
+                    JOptionPane.showMessageDialog(frame, "Vehicle added successfully!", 
+                        "Success", JOptionPane.INFORMATION_MESSAGE);
+                } else {
+                    JOptionPane.showMessageDialog(frame, "Failed to add vehicle!", 
+                        "Error", JOptionPane.ERROR_MESSAGE);
+                }
+            } else {
+                sql = "INSERT INTO Vehicle (regn_number, fuel_type, transmission_type, " +
+                             "special_details, rental_date, user) VALUES (?, ?, ?, ?, ?, ?)";
+                             
+                stmt = conn.prepareStatement(sql);
+                
+                String tempRegnNumber = "REQ-" + System.currentTimeMillis();
+                stmt.setString(1, tempRegnNumber);
+                stmt.setString(2, vehicle.getFuelType().toString());
+                stmt.setString(3, vehicle.getTransmissionType().toString());
+                
+                StringBuilder sb = new StringBuilder();
+                for (Object detail : specialDetails) {
+                    sb.append(detail.toString()).append(",");
+                }
+                String detailsStr = sb.length() > 0 ? sb.substring(0, sb.length() - 1) : "";
+                
+                stmt.setString(4, detailsStr);
+                stmt.setDate(5, java.sql.Date.valueOf(LocalDate.now()));
+                stmt.setString(6, Login.getActiveUser().getUserId());
+                
+                int rowsAffected = stmt.executeUpdate();
+                if (rowsAffected > 0) {
+                    JOptionPane.showMessageDialog(frame, "Vehicle request submitted successfully!", 
+                        "Success", JOptionPane.INFORMATION_MESSAGE);
+                } else {
+                    JOptionPane.showMessageDialog(frame, "Failed to submit vehicle request!", 
+                        "Error", JOptionPane.ERROR_MESSAGE);
+                }
             }
-        } else {
-            sql = "INSERT INTO RentedVehicles (user_id, vehicle_id, rental_date) VALUES (?, ?, ?)";
-
-            try (Connection conn = DriverManager.getConnection(App.getDatabase()[0], App.getDatabase()[1], App.getDatabase()[2]);
-                PreparedStatement stmt = conn.prepareStatement(sql)) {
-
-                stmt.setString(1, Login.getActiveUser().getUserId());
-                stmt.setString(2, vehicle.getRegnNumber());
-                stmt.setTimestamp(3, Timestamp.valueOf(LocalDate.now().atStartOfDay()));
-
-                stmt.executeUpdate();
-                System.out.println("Vehicle stored in database successfully.");
-            } catch (SQLException e) {
-                e.printStackTrace();
-            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+            JOptionPane.showMessageDialog(frame, "Database error: " + e.getMessage(), 
+                "Error", JOptionPane.ERROR_MESSAGE);
         }
     }
 

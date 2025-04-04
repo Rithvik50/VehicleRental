@@ -26,12 +26,16 @@ public class Payment extends MouseAdapter {
         }
     }
 
-    public int calculateTotalCost() {
-        return 1;
+    public double calculateTotalRent() {
+        double totalCost = 0;
+        for (Vehicle v : Login.getActiveUser().getRentedVehicles()) {
+            totalCost += v.getPerDayRent();
+        }
+        return totalCost;
     }
 
     public void rentVehicles() {
-        if (Login.getActiveUser().getInsurance().getCoverage() >= calculateTotalCost()) {
+        if (Login.getActiveUser().getInsurance().getCoverage() >= calculateTotalRent()) {
 
         }
     }

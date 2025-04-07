@@ -7,12 +7,12 @@ public class Bike extends Vehicle {
     private int engineDisplacement;
     private double weight;
 
-    public Bike(FuelType fuelType, TransmissionType transmissionType) {
-        super(fuelType, transmissionType);
+    public Bike(String regnNumber, FuelType fuelType, TransmissionType transmissionType) {
+        super(regnNumber, fuelType, transmissionType);
     }
 
-    public Bike(String regnNumber, FuelType fuelType, TransmissionType transmissionType, double perDayRent) {
-        super(regnNumber, fuelType, transmissionType, perDayRent);
+    public Bike(FuelType fuelType, TransmissionType transmissionType, double perDayRent) {
+        super(fuelType, transmissionType, perDayRent);
     }
 
     public Bike setBikeType(BikeType bikeType) {

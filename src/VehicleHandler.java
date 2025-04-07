@@ -114,12 +114,12 @@ public class VehicleHandler extends MouseAdapter {
         });
 
         countField = new JTextField(15);
-        countField.setBounds(600, 250, 200, 30);
+        countField.setBounds(600, 200, 200, 30);
         countField.setVisible(false);
         frame.add(countField);
 
         rentField = new JTextField(15);
-        rentField.setBounds(600, 300, 200, 30);
+        rentField.setBounds(600, 350, 200, 30);
         rentField.setVisible(false);
         frame.add(rentField);
 
@@ -456,8 +456,8 @@ public class VehicleHandler extends MouseAdapter {
         rent = rentField.getText();
         regnNumber = regnNumberField.getText();
         
-        if (vehicleType == null || fuelType == null || transmissionType == null) {
-            JOptionPane.showMessageDialog(frame, "Please select vehicle type, fuel type, and transmission type!", 
+        if (vehicleType == null || fuelType == null || transmissionType == null || (regnNumber.isEmpty() && !Login.getActiveUser().isAdmin())) {
+            JOptionPane.showMessageDialog(frame, "Please fill in all base fields!", 
                 "Error", JOptionPane.ERROR_MESSAGE);
             return false;
         }
@@ -486,7 +486,7 @@ public class VehicleHandler extends MouseAdapter {
         }
     
         if (Login.getActiveUser().isAdmin()) {
-            if (count.isEmpty() || rent.isEmpty() || regnNumber.isEmpty()) {
+            if (count.isEmpty() || rent.isEmpty()) {
                 JOptionPane.showMessageDialog(frame, "Please fill in all administrative fields!", 
                     "Error", JOptionPane.ERROR_MESSAGE);
                 return false;
@@ -503,27 +503,27 @@ public class VehicleHandler extends MouseAdapter {
             if (vehicleType.equals("Car")) {
                 Car.CarType carType = specialDetails.get(0) == null ? null : (Car.CarType) specialDetails.get(0);
                 int numberOfSeats = specialDetails.get(1) == null ? 0 : Integer.parseInt((String) specialDetails.get(1));
-                vehicle = new Car(regnNumber, fuelType, transmissionType, Double.parseDouble(rent))
+                vehicle = new Car(fuelType, transmissionType, Double.parseDouble(rent))
                         .setCarType(carType).setNumberOfSeats(numberOfSeats).setSpecialDetails(specialDetails);
             } else if (vehicleType.equals("Bike")) {
                 Bike.BikeType bikeType = specialDetails.get(0) == null ? null : (Bike.BikeType) specialDetails.get(0);
                 int engineDisplacement = specialDetails.get(1) == null ? 0 : Integer.parseInt((String) specialDetails.get(1));
                 double weight = specialDetails.get(2) == null ? 0 : Double.parseDouble((String) specialDetails.get(2));
-                vehicle = new Bike(regnNumber, fuelType, transmissionType, Double.parseDouble(rent))
+                vehicle = new Bike(fuelType, transmissionType, Double.parseDouble(rent))
                         .setBikeType(bikeType).setEngineDisplacement(engineDisplacement).setWeight(weight).setSpecialDetails(specialDetails);
             } else if (vehicleType.equals("Truck")) {
                 Truck.TruckType truckType = specialDetails.get(0) == null ? null : (Truck.TruckType) specialDetails.get(0);
                 int numberOfAxles = specialDetails.get(1) == null ? 0 : Integer.parseInt((String) specialDetails.get(1));
-                vehicle = new Truck(regnNumber, fuelType, transmissionType, Double.parseDouble(rent))
+                vehicle = new Truck(fuelType, transmissionType, Double.parseDouble(rent))
                         .setTruckType(truckType).setNumberOfAxles(numberOfAxles).setSpecialDetails(specialDetails);
             }
         } else {
             if (vehicleType.equals("Car")) {
-                vehicle = new Car(fuelType, transmissionType).setSpecialDetails(specialDetails);
+                vehicle = new Car(regnNumber, fuelType, transmissionType).setSpecialDetails(specialDetails);
             } else if (vehicleType.equals("Bike")) {
-                vehicle = new Bike(fuelType, transmissionType).setSpecialDetails(specialDetails);
+                vehicle = new Bike(regnNumber, fuelType, transmissionType).setSpecialDetails(specialDetails);
             } else if (vehicleType.equals("Truck")) {
-                vehicle = new Truck(fuelType, transmissionType).setSpecialDetails(specialDetails);
+                vehicle = new Truck(regnNumber, fuelType, transmissionType).setSpecialDetails(specialDetails);
             }
         }
     
@@ -542,11 +542,8 @@ public class VehicleHandler extends MouseAdapter {
             System.out.println("No vehicle to store.");
             return;
         }
-
-        PreparedStatement pstmt = null;
         
         try (Connection conn = DriverManager.getConnection(App.getDatabase()[0], App.getDatabase()[1], App.getDatabase()[2])) {
-            // Create JSON format for special_details
             StringBuilder jsonBuilder = new StringBuilder("{");
             
             if (vehicleType.equals("Car")) {
@@ -563,21 +560,22 @@ public class VehicleHandler extends MouseAdapter {
             
             jsonBuilder.append("}");
             String jsonDetails = jsonBuilder.toString();
+
+            PreparedStatement stmt = null;
+            String sql = "";
             
             if (Login.getActiveUser().isAdmin()) {
-                // Admin is adding a new vehicle to inventory
-                String sql = "INSERT INTO Vehicle (regn_number, fuel_type, transmission_type, rent, " +
-                             "special_details, count) VALUES (?, ?, ?, ?, ?, ?)";
+                sql = "INSERT INTO Vehicle (fuel_type, transmission_type, rent, " +
+                             "special_details, count) VALUES (?, ?, ?, ?, ?)";
                              
-                pstmt = conn.prepareStatement(sql);
-                pstmt.setString(1, vehicle.getRegnNumber());
-                pstmt.setString(2, vehicle.getFuelType().toString());
-                pstmt.setString(3, vehicle.getTransmissionType().toString());
-                pstmt.setDouble(4, vehicle.getPerDayRent());
-                pstmt.setString(5, jsonDetails);
-                pstmt.setInt(6, Integer.parseInt(count));
+                stmt = conn.prepareStatement(sql);
+                stmt.setString(1, vehicle.getFuelType().toString());
+                stmt.setString(2, vehicle.getTransmissionType().toString());
+                stmt.setDouble(3, vehicle.getPerDayRent());
+                stmt.setString(4, jsonDetails);
+                stmt.setInt(5, Integer.parseInt(count));
                 
-                int rowsAffected = pstmt.executeUpdate();
+                int rowsAffected = stmt.executeUpdate();
                 if (rowsAffected > 0) {
                     JOptionPane.showMessageDialog(frame, "Vehicle added successfully!", 
                         "Success", JOptionPane.INFORMATION_MESSAGE);
@@ -586,22 +584,19 @@ public class VehicleHandler extends MouseAdapter {
                         "Error", JOptionPane.ERROR_MESSAGE);
                 }
             } else {
-                // Regular user is creating a rental request
-                String sql = "INSERT INTO Vehicle (regn_number, fuel_type, transmission_type, " +
+                sql = "INSERT INTO Vehicle (regn_number, fuel_type, transmission_type, " +
                              "special_details, rental_date, user) VALUES (?, ?, ?, ?, ?, ?)";
                              
-                pstmt = conn.prepareStatement(sql);
+                stmt = conn.prepareStatement(sql);
+
+                stmt.setString(1, vehicle.getRegnNumber());
+                stmt.setString(2, vehicle.getFuelType().toString());
+                stmt.setString(3, vehicle.getTransmissionType().toString());
+                stmt.setString(4, jsonDetails);
+                stmt.setDate(5, java.sql.Date.valueOf(LocalDate.now()));
+                stmt.setString(6, Login.getActiveUser().getUserId());
                 
-                // Generate a temporary registration number for user requests
-                String tempRegnNumber = "REQ-" + System.currentTimeMillis();
-                pstmt.setString(1, tempRegnNumber);
-                pstmt.setString(2, vehicle.getFuelType().toString());
-                pstmt.setString(3, vehicle.getTransmissionType().toString());
-                pstmt.setString(4, jsonDetails);
-                pstmt.setDate(5, java.sql.Date.valueOf(LocalDate.now()));
-                pstmt.setString(6, Login.getActiveUser().getUserId());
-                
-                int rowsAffected = pstmt.executeUpdate();
+                int rowsAffected = stmt.executeUpdate();
                 if (rowsAffected > 0) {
                     JOptionPane.showMessageDialog(frame, "Vehicle request submitted successfully!", 
                         "Success", JOptionPane.INFORMATION_MESSAGE);
@@ -682,6 +677,7 @@ public class VehicleHandler extends MouseAdapter {
         if (Login.getActiveUser().isAdmin()) {
             countField.setVisible(true);
             rentField.setVisible(true);
+        } else {
             regnNumberField.setVisible(true);
         }
     }
@@ -715,8 +711,9 @@ public class VehicleHandler extends MouseAdapter {
             g.drawString("Transmission Type", 450, 450);
             
             if (Login.getActiveUser().isAdmin()) {
-                g.drawString("Count", 550, 270);
-                g.drawString("Rent", 550, 320);
+                g.drawString("Count", 550, 220);
+                g.drawString("Rent", 550, 370);
+            } else {
                 g.drawString("Registration Number", 450, 370);
             }
 

@@ -6,12 +6,12 @@ public class Truck extends Vehicle {
     private TruckType truckType;
     private int numberOfAxles;
 
-    public Truck(FuelType fuelType, TransmissionType transmissionType) {
-        super(fuelType, transmissionType);
+    public Truck(String regnNumber, FuelType fuelType, TransmissionType transmissionType) {
+        super(regnNumber, fuelType, transmissionType);
     }
 
-    public Truck(String regnNumber, FuelType fuelType, TransmissionType transmissionType, double perDayRent) {
-        super(regnNumber, fuelType, transmissionType, perDayRent);
+    public Truck(FuelType fuelType, TransmissionType transmissionType, double perDayRent) {
+        super(fuelType, transmissionType, perDayRent);
     }
 
     public Truck setTruckType(TruckType truckType) {

@@ -6,12 +6,12 @@ public class Car extends Vehicle {
     private CarType carType;
     private int numberOfSeats;
 
-    public Car(FuelType fuelType, TransmissionType transmissionType) {
-        super(fuelType, transmissionType);
+    public Car(String regnNumber, FuelType fuelType, TransmissionType transmissionType) {
+        super(regnNumber, fuelType, transmissionType);
     }
 
-    public Car(String regnNumber, FuelType fuelType, TransmissionType transmissionType, double perDayRent) {
-        super(regnNumber, fuelType, transmissionType, perDayRent);
+    public Car(FuelType fuelType, TransmissionType transmissionType, double perDayRent) {
+        super(fuelType, transmissionType, perDayRent);
     }
 
     public Car setCarType(CarType carType) {

@@ -47,13 +47,7 @@ public class User {
             ResultSet rs = stmt.executeQuery();
     
             while (rs.next()) {
-                Vehicle vehicle = new Vehicle(
-                    rs.getString("regn_number"),
-                    FuelType.fromValue(rs.getString("fuel_type")),
-                    TransmissionType.fromValue(rs.getString("transmission_type")),
-                    rs.getDouble("rent")
-                ).setSpecialDetails(new Gson().fromJson(rs.getString("special_details"), new TypeToken<ArrayList<Object>>() {}.getType()));
-                rentedVehicles.add(vehicle);
+                Vehicle vehicle = null; // Deal with this
             }
         } catch (SQLException e) {
             e.printStackTrace();

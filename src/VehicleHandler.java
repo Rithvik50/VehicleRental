@@ -542,31 +542,42 @@ public class VehicleHandler extends MouseAdapter {
             System.out.println("No vehicle to store.");
             return;
         }
+
+        PreparedStatement pstmt = null;
         
         try (Connection conn = DriverManager.getConnection(App.getDatabase()[0], App.getDatabase()[1], App.getDatabase()[2])) {
-            PreparedStatement stmt;
-            String sql;
-
+            // Create JSON format for special_details
+            StringBuilder jsonBuilder = new StringBuilder("{");
+            
+            if (vehicleType.equals("Car")) {
+                jsonBuilder.append("\"carType\":\"").append(specialDetails.get(0)).append("\",");
+                jsonBuilder.append("\"numberOfSeats\":\"").append(specialDetails.get(1)).append("\"");
+            } else if (vehicleType.equals("Bike")) {
+                jsonBuilder.append("\"bikeType\":\"").append(specialDetails.get(0)).append("\",");
+                jsonBuilder.append("\"engineDisplacement\":\"").append(specialDetails.get(1)).append("\",");
+                jsonBuilder.append("\"weight\":\"").append(specialDetails.get(2)).append("\"");
+            } else if (vehicleType.equals("Truck")) {
+                jsonBuilder.append("\"truckType\":\"").append(specialDetails.get(0)).append("\",");
+                jsonBuilder.append("\"numberOfAxles\":\"").append(specialDetails.get(1)).append("\"");
+            }
+            
+            jsonBuilder.append("}");
+            String jsonDetails = jsonBuilder.toString();
+            
             if (Login.getActiveUser().isAdmin()) {
-                sql = "INSERT INTO Vehicle (regn_number, fuel_type, transmission_type, rent, " +
+                // Admin is adding a new vehicle to inventory
+                String sql = "INSERT INTO Vehicle (regn_number, fuel_type, transmission_type, rent, " +
                              "special_details, count) VALUES (?, ?, ?, ?, ?, ?)";
                              
-                stmt = conn.prepareStatement(sql);
-                stmt.setString(1, vehicle.getRegnNumber());
-                stmt.setString(2, vehicle.getFuelType().toString());
-                stmt.setString(3, vehicle.getTransmissionType().toString());
-                stmt.setDouble(4, vehicle.getPerDayRent());
+                pstmt = conn.prepareStatement(sql);
+                pstmt.setString(1, vehicle.getRegnNumber());
+                pstmt.setString(2, vehicle.getFuelType().toString());
+                pstmt.setString(3, vehicle.getTransmissionType().toString());
+                pstmt.setDouble(4, vehicle.getPerDayRent());
+                pstmt.setString(5, jsonDetails);
+                pstmt.setInt(6, Integer.parseInt(count));
                 
-                StringBuilder sb = new StringBuilder();
-                for (Object detail : specialDetails) {
-                    sb.append(detail.toString()).append(",");
-                }
-                String detailsStr = sb.length() > 0 ? sb.substring(0, sb.length() - 1) : "";
-                
-                stmt.setString(5, detailsStr);
-                stmt.setInt(6, Integer.parseInt(count));
-                
-                int rowsAffected = stmt.executeUpdate();
+                int rowsAffected = pstmt.executeUpdate();
                 if (rowsAffected > 0) {
                     JOptionPane.showMessageDialog(frame, "Vehicle added successfully!", 
                         "Success", JOptionPane.INFORMATION_MESSAGE);
@@ -575,27 +586,22 @@ public class VehicleHandler extends MouseAdapter {
                         "Error", JOptionPane.ERROR_MESSAGE);
                 }
             } else {
-                sql = "INSERT INTO Vehicle (regn_number, fuel_type, transmission_type, " +
+                // Regular user is creating a rental request
+                String sql = "INSERT INTO Vehicle (regn_number, fuel_type, transmission_type, " +
                              "special_details, rental_date, user) VALUES (?, ?, ?, ?, ?, ?)";
                              
-                stmt = conn.prepareStatement(sql);
+                pstmt = conn.prepareStatement(sql);
                 
+                // Generate a temporary registration number for user requests
                 String tempRegnNumber = "REQ-" + System.currentTimeMillis();
-                stmt.setString(1, tempRegnNumber);
-                stmt.setString(2, vehicle.getFuelType().toString());
-                stmt.setString(3, vehicle.getTransmissionType().toString());
+                pstmt.setString(1, tempRegnNumber);
+                pstmt.setString(2, vehicle.getFuelType().toString());
+                pstmt.setString(3, vehicle.getTransmissionType().toString());
+                pstmt.setString(4, jsonDetails);
+                pstmt.setDate(5, java.sql.Date.valueOf(LocalDate.now()));
+                pstmt.setString(6, Login.getActiveUser().getUserId());
                 
-                StringBuilder sb = new StringBuilder();
-                for (Object detail : specialDetails) {
-                    sb.append(detail.toString()).append(",");
-                }
-                String detailsStr = sb.length() > 0 ? sb.substring(0, sb.length() - 1) : "";
-                
-                stmt.setString(4, detailsStr);
-                stmt.setDate(5, Date.valueOf(LocalDate.now()));
-                stmt.setString(6, Login.getActiveUser().getUserId());
-                
-                int rowsAffected = stmt.executeUpdate();
+                int rowsAffected = pstmt.executeUpdate();
                 if (rowsAffected > 0) {
                     JOptionPane.showMessageDialog(frame, "Vehicle request submitted successfully!", 
                         "Success", JOptionPane.INFORMATION_MESSAGE);

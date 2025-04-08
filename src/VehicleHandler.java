@@ -642,11 +642,9 @@ public class VehicleHandler extends MouseAdapter {
             
             boolean foundMatch = false;
             int matchedVehicleId = -1;
-            int availableCount = 0;
             
             while (rs.next()) {
                 int vehicleId = rs.getInt("vehicle_id");
-                int count = rs.getInt("count");
                 String dbSpecialDetails = rs.getString("special_details");
                 
                 System.out.println("\nChecking vehicle ID: " + vehicleId);
@@ -671,7 +669,6 @@ public class VehicleHandler extends MouseAdapter {
                 if (detailsMatch) {
                     foundMatch = true;
                     matchedVehicleId = vehicleId;
-                    availableCount = count;
                     break;
                 }
             }

@@ -2,7 +2,6 @@ import java.awt.*;
 import java.awt.event.*;
 import java.sql.*;
 import javax.swing.*;
-import java.time.LocalDate;
 import java.util.ArrayList;
 
 public class VehicleHandler extends MouseAdapter {
@@ -456,7 +455,7 @@ public class VehicleHandler extends MouseAdapter {
         rent = rentField.getText();
         regnNumber = regnNumberField.getText();
         
-        if (vehicleType == null || fuelType == null || transmissionType == null || (regnNumber.isEmpty() && !Login.getActiveUser().isAdmin())) {
+        if (vehicleType == null || fuelType == null || transmissionType == null) {
             JOptionPane.showMessageDialog(frame, "Please fill in all base fields!", 
                 "Error", JOptionPane.ERROR_MESSAGE);
             return false;
@@ -494,30 +493,91 @@ public class VehicleHandler extends MouseAdapter {
             
             try {
                 Double.parseDouble(rent);
+                Integer.parseInt(count);
             } catch (NumberFormatException e) {
-                JOptionPane.showMessageDialog(frame, "Rent must be a valid number!", 
+                JOptionPane.showMessageDialog(frame, "Rent and count must be valid numbers!", 
                     "Error", JOptionPane.ERROR_MESSAGE);
                 return false;
             }
             
             if (vehicleType.equals("Car")) {
-                Car.CarType carType = specialDetails.get(0) == null ? null : (Car.CarType) specialDetails.get(0);
-                int numberOfSeats = specialDetails.get(1) == null ? 0 : Integer.parseInt((String) specialDetails.get(1));
+                String carTypeStr = specialDetails.get(0).toString();
+                Car.CarType carType = null;
+                try {
+                    carType = Car.CarType.valueOf(carTypeStr.toUpperCase());
+                } catch (IllegalArgumentException e) {
+                    if (carTypeStr.equals("SUV")) {
+                        carType = Car.CarType.SUV;
+                    } else if (carTypeStr.equals("Sedan")) {
+                        carType = Car.CarType.SEDAN;
+                    } else if (carTypeStr.equals("Hatchback")) {
+                        carType = Car.CarType.HATCHBACK;
+                    }
+                }
+                
+                int numberOfSeats = Integer.parseInt(specialDetails.get(1).toString());
                 vehicle = new Car(fuelType, transmissionType, Double.parseDouble(rent))
                         .setCarType(carType).setNumberOfSeats(numberOfSeats).setSpecialDetails(specialDetails);
             } else if (vehicleType.equals("Bike")) {
-                Bike.BikeType bikeType = specialDetails.get(0) == null ? null : (Bike.BikeType) specialDetails.get(0);
-                int engineDisplacement = specialDetails.get(1) == null ? 0 : Integer.parseInt((String) specialDetails.get(1));
-                double weight = specialDetails.get(2) == null ? 0 : Double.parseDouble((String) specialDetails.get(2));
+                String bikeTypeStr = specialDetails.get(0).toString();
+                Bike.BikeType bikeType = null;
+                try {
+                    bikeType = Bike.BikeType.valueOf(bikeTypeStr.toUpperCase());
+                } catch (IllegalArgumentException e) {
+                    if (bikeTypeStr.equals("Racing")) {
+                        bikeType = Bike.BikeType.RACING;
+                    } else if (bikeTypeStr.equals("Cruiser")) {
+                        bikeType = Bike.BikeType.CRUISER;
+                    } else if (bikeTypeStr.equals("City")) {
+                        bikeType = Bike.BikeType.CITY;
+                    }
+                }
+                
+                String engineStr = specialDetails.get(1).toString();
+                int engineDisplacement = Integer.parseInt(engineStr.replace("cc", ""));
+                
+                String weightStr = specialDetails.get(2).toString();
+                double weight = Double.parseDouble(weightStr.replace("kg", ""));
+                
                 vehicle = new Bike(fuelType, transmissionType, Double.parseDouble(rent))
                         .setBikeType(bikeType).setEngineDisplacement(engineDisplacement).setWeight(weight).setSpecialDetails(specialDetails);
             } else if (vehicleType.equals("Truck")) {
-                Truck.TruckType truckType = specialDetails.get(0) == null ? null : (Truck.TruckType) specialDetails.get(0);
-                int numberOfAxles = specialDetails.get(1) == null ? 0 : Integer.parseInt((String) specialDetails.get(1));
+                String truckTypeStr = specialDetails.get(0).toString();
+                Truck.TruckType truckType = null;
+                try {
+                    truckType = Truck.TruckType.valueOf(truckTypeStr.toUpperCase().replace(" ", "_"));
+                } catch (IllegalArgumentException e) {
+                    if (truckTypeStr.equals("Flatbed")) {
+                        truckType = Truck.TruckType.FLATBED;
+                    } else if (truckTypeStr.equals("Heavy Duty")) {
+                        truckType = Truck.TruckType.HEAVY_DUTY;
+                    } else if (truckTypeStr.equals("Light Duty")) {
+                        truckType = Truck.TruckType.LIGHT_DUTY;
+                    } else if (truckTypeStr.equals("Box")) {
+                        truckType = Truck.TruckType.BOX;
+                    }
+                }
+                
+                int numberOfAxles = Integer.parseInt(specialDetails.get(1).toString());
                 vehicle = new Truck(fuelType, transmissionType, Double.parseDouble(rent))
                         .setTruckType(truckType).setNumberOfAxles(numberOfAxles).setSpecialDetails(specialDetails);
             }
+            
+            // For admin, store the new vehicle
+            if (vehicle != null) {
+                System.out.println("Vehicle finalized: " + vehicle.getRegnNumber());
+                vehicle.setSpecialDetails(specialDetails);
+                storeVehicle();
+                return true;
+            }
         } else {
+            // For non-admin users, rent an existing vehicle
+            if (regnNumber.isEmpty()) {
+                JOptionPane.showMessageDialog(frame, "Please enter a registration number!", 
+                    "Error", JOptionPane.ERROR_MESSAGE);
+                return false;
+            }
+            
             if (vehicleType.equals("Car")) {
                 vehicle = new Car(regnNumber, fuelType, transmissionType).setSpecialDetails(specialDetails);
             } else if (vehicleType.equals("Bike")) {
@@ -525,16 +585,171 @@ public class VehicleHandler extends MouseAdapter {
             } else if (vehicleType.equals("Truck")) {
                 vehicle = new Truck(regnNumber, fuelType, transmissionType).setSpecialDetails(specialDetails);
             }
-        }
-    
-        if (vehicle != null) {
-            System.out.println("Vehicle finalized: " + vehicle.getRegnNumber());
-            vehicle.setSpecialDetails(specialDetails);
-            storeVehicle();
-            return true;
+            
+            if (vehicle != null) {
+                System.out.println("Vehicle rental request: " + vehicle.getRegnNumber());
+                vehicle.setSpecialDetails(specialDetails);
+                return rentVehicle(); // Call the new rent method for non-admin users
+            }
         }
         
         return false;
+    }
+
+    public boolean rentVehicle() {
+        if (vehicle == null) {
+            System.out.println("No vehicle to rent.");
+            return false;
+        }
+        
+        try (Connection conn = DriverManager.getConnection(App.getDatabase()[0], App.getDatabase()[1], App.getDatabase()[2])) {
+            // First, fetch all vehicles with matching basic properties and count > 0
+            PreparedStatement checkStmt;
+            String checkSql;
+            
+            // Check if type column exists
+            boolean useTypeColumn = false;
+            try {
+                Statement testStmt = conn.createStatement();
+                testStmt.execute("SELECT type FROM Vehicle LIMIT 1");
+                useTypeColumn = true;
+            } catch (SQLException e) {
+                System.out.println("Type column doesn't exist: " + e.getMessage());
+            }
+            
+            if (useTypeColumn) {
+                checkSql = "SELECT vehicle_id, count, special_details FROM Vehicle " +
+                          "WHERE type = ? AND fuel_type = ? AND transmission_type = ? AND count > 0";
+                checkStmt = conn.prepareStatement(checkSql);
+                checkStmt.setString(1, vehicleType);
+                checkStmt.setString(2, vehicle.getFuelType().toString());
+                checkStmt.setString(3, vehicle.getTransmissionType().toString());
+            } else {
+                checkSql = "SELECT vehicle_id, count, special_details FROM Vehicle " +
+                          "WHERE fuel_type = ? AND transmission_type = ? AND count > 0";
+                checkStmt = conn.prepareStatement(checkSql);
+                checkStmt.setString(1, vehicle.getFuelType().toString());
+                checkStmt.setString(2, vehicle.getTransmissionType().toString());
+            }
+            
+            ResultSet rs = checkStmt.executeQuery();
+            
+            // For debugging: print what we're looking for
+            System.out.println("Searching for vehicle:");
+            System.out.println("Type: " + vehicleType);
+            System.out.println("Fuel: " + vehicle.getFuelType());
+            System.out.println("Transmission: " + vehicle.getTransmissionType());
+            
+            // Print the special details we want
+            System.out.println("Special details we want:");
+            for (int i = 0; i < specialDetails.size(); i++) {
+                System.out.println("Detail " + i + ": " + specialDetails.get(i));
+            }
+            
+            boolean foundMatch = false;
+            int matchedVehicleId = -1;
+            int availableCount = 0;
+            
+            while (rs.next()) {
+                int vehicleId = rs.getInt("vehicle_id");
+                int count = rs.getInt("count");
+                String dbSpecialDetails = rs.getString("special_details");
+                
+                System.out.println("\nChecking vehicle ID: " + vehicleId);
+                System.out.println("DB Special details: " + dbSpecialDetails);
+                
+                // Now manually check if special details match
+                boolean detailsMatch = false;
+                
+                if (vehicleType.equals("Car")) {
+                    detailsMatch = dbSpecialDetails.contains(specialDetails.get(0).toString()) && 
+                                   dbSpecialDetails.contains(specialDetails.get(1).toString());
+                } else if (vehicleType.equals("Bike")) {
+                    detailsMatch = dbSpecialDetails.contains(specialDetails.get(0).toString()) && 
+                                   dbSpecialDetails.contains(specialDetails.get(1).toString()) &&
+                                   dbSpecialDetails.contains(specialDetails.get(2).toString());
+                } else if (vehicleType.equals("Truck")) {
+                    detailsMatch = dbSpecialDetails.contains(specialDetails.get(0).toString()) && 
+                                   dbSpecialDetails.contains(specialDetails.get(1).toString());
+                }
+                
+                System.out.println("Details match: " + detailsMatch);
+                
+                if (detailsMatch) {
+                    foundMatch = true;
+                    matchedVehicleId = vehicleId;
+                    availableCount = count;
+                    break;
+                }
+            }
+            
+            if (foundMatch) {
+                // Update vehicle count
+                String updateSql = "UPDATE Vehicle SET count = count - 1 WHERE vehicle_id = ?";
+                PreparedStatement updateStmt = conn.prepareStatement(updateSql);
+                updateStmt.setInt(1, matchedVehicleId);
+                
+                int rowsAffected = updateStmt.executeUpdate();
+                
+                if (rowsAffected > 0) {
+                    // Create rental history table if it doesn't exist
+                    String createTableSql = "CREATE TABLE IF NOT EXISTS RentalHistory (" +
+                                            "id INT PRIMARY KEY AUTO_INCREMENT, " +
+                                            "user_id VARCHAR(45) NOT NULL, " +
+                                            "vehicle_id INT NOT NULL, " +
+                                            "rental_date DATETIME NOT NULL, " +
+                                            "regn_number VARCHAR(45) NOT NULL, " +
+                                            "return_date DATETIME, " +
+                                            "FOREIGN KEY (user_id) REFERENCES User(username), " +
+                                            "FOREIGN KEY (vehicle_id) REFERENCES Vehicle(vehicle_id))";
+                    
+                    PreparedStatement createTableStmt = conn.prepareStatement(createTableSql);
+                    createTableStmt.executeUpdate();
+                    
+                    // Insert rental record
+                    String rentalSql = "INSERT INTO RentalHistory (user_id, vehicle_id, rental_date, regn_number) " +
+                                       "VALUES (?, ?, ?, ?)";
+                    
+                    PreparedStatement rentalStmt = conn.prepareStatement(rentalSql);
+                    rentalStmt.setString(1, Login.getActiveUser().getUserId());
+                    rentalStmt.setInt(2, matchedVehicleId);
+                    rentalStmt.setTimestamp(3, new java.sql.Timestamp(System.currentTimeMillis()));
+                    rentalStmt.setString(4, vehicle.getRegnNumber());
+                    
+                    rentalStmt.executeUpdate();
+                    
+                    JOptionPane.showMessageDialog(frame, "Vehicle rented successfully!", 
+                        "Success", JOptionPane.INFORMATION_MESSAGE);
+                    return true;
+                } else {
+                    JOptionPane.showMessageDialog(frame, "Failed to update vehicle inventory!", 
+                        "Error", JOptionPane.ERROR_MESSAGE);
+                    return false;
+                }
+            } else {
+                // Optional: Dump all vehicles in database for debugging
+                System.out.println("\nAll vehicles in database:");
+                Statement stmt = conn.createStatement();
+                ResultSet allVehicles = stmt.executeQuery("SELECT * FROM Vehicle");
+                while (allVehicles.next()) {
+                    System.out.println("ID: " + allVehicles.getInt("vehicle_id") + 
+                                      ", Type: " + (useTypeColumn ? allVehicles.getString("type") : "N/A") +
+                                      ", Fuel: " + allVehicles.getString("fuel_type") +
+                                      ", Trans: " + allVehicles.getString("transmission_type") +
+                                      ", Count: " + allVehicles.getInt("count") +
+                                      ", Details: " + allVehicles.getString("special_details"));
+                }
+                
+                JOptionPane.showMessageDialog(frame, "Sorry, this vehicle is not available in our inventory!", 
+                    "Not Available", JOptionPane.ERROR_MESSAGE);
+                return false;
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+            JOptionPane.showMessageDialog(frame, "Database error: " + e.getMessage(), 
+                "Error", JOptionPane.ERROR_MESSAGE);
+            return false;
+        }
     }
 
     public void storeVehicle() {
@@ -544,6 +759,29 @@ public class VehicleHandler extends MouseAdapter {
         }
         
         try (Connection conn = DriverManager.getConnection(App.getDatabase()[0], App.getDatabase()[1], App.getDatabase()[2])) {
+            // First, check if the type column exists, and add it if it doesn't
+            try {
+                DatabaseMetaData md = conn.getMetaData();
+                ResultSet rs = md.getColumns(null, null, "Vehicle", "type");
+                
+                if (!rs.next()) {
+                    // The 'type' column doesn't exist, so add it
+                    Statement alterStmt = conn.createStatement();
+                    alterStmt.execute("ALTER TABLE Vehicle ADD COLUMN type VARCHAR(45)");
+                    
+                    // Update existing records with appropriate vehicle types based on special_details
+                    Statement updateStmt = conn.createStatement();
+                    updateStmt.execute("UPDATE Vehicle SET type = 'Car' WHERE special_details LIKE '%carType%'");
+                    updateStmt.execute("UPDATE Vehicle SET type = 'Bike' WHERE special_details LIKE '%bikeType%'");
+                    updateStmt.execute("UPDATE Vehicle SET type = 'Truck' WHERE special_details LIKE '%truckType%'");
+                    
+                    System.out.println("Added 'type' column to Vehicle table");
+                }
+            } catch (SQLException e) {
+                System.out.println("Error checking or adding 'type' column: " + e.getMessage());
+                // Continue with original query without type column
+            }
+            
             StringBuilder jsonBuilder = new StringBuilder("{");
             
             if (vehicleType.equals("Car")) {
@@ -560,46 +798,75 @@ public class VehicleHandler extends MouseAdapter {
             
             jsonBuilder.append("}");
             String jsonDetails = jsonBuilder.toString();
-
+    
             PreparedStatement stmt = null;
             String sql = "";
             
+            boolean typeColumnExists = false;
+            try {
+                Statement testStmt = conn.createStatement();
+                testStmt.execute("SELECT type FROM Vehicle LIMIT 1");
+                typeColumnExists = true;
+            } catch (SQLException e) {
+                // Type column doesn't exist
+                System.out.println("Type column doesn't exist: " + e.getMessage());
+            }
+            
             if (Login.getActiveUser().isAdmin()) {
-                sql = "INSERT INTO Vehicle (fuel_type, transmission_type, rent, " +
-                             "special_details, count) VALUES (?, ?, ?, ?, ?)";
-                             
-                stmt = conn.prepareStatement(sql);
-                stmt.setString(1, vehicle.getFuelType().toString());
-                stmt.setString(2, vehicle.getTransmissionType().toString());
-                stmt.setDouble(3, vehicle.getPerDayRent());
-                stmt.setString(4, jsonDetails);
-                stmt.setInt(5, Integer.parseInt(count));
-                
-                int rowsAffected = stmt.executeUpdate();
-                if (rowsAffected > 0) {
+                if (typeColumnExists) {
+                    sql = "INSERT INTO Vehicle (type, fuel_type, transmission_type, rent, special_details, count) VALUES (?, ?, ?, ?, ?, ?)";
+                    stmt = conn.prepareStatement(sql);
+                    stmt.setString(1, vehicleType);
+                    stmt.setString(2, vehicle.getFuelType().toString());
+                    stmt.setString(3, vehicle.getTransmissionType().toString());
+                    stmt.setDouble(4, vehicle.getPerDayRent());
+                    stmt.setString(5, jsonDetails);
+                    stmt.setInt(6, Integer.parseInt(count));
+                } else {
+                    sql = "INSERT INTO Vehicle (fuel_type, transmission_type, rent, special_details, count) VALUES (?, ?, ?, ?, ?)";
+                    stmt = conn.prepareStatement(sql);
+                    stmt.setString(1, vehicle.getFuelType().toString());
+                    stmt.setString(2, vehicle.getTransmissionType().toString());
+                    stmt.setDouble(3, vehicle.getPerDayRent());
+                    stmt.setString(4, jsonDetails);
+                    stmt.setInt(5, Integer.parseInt(count));
+                }
+            } else {
+                if (typeColumnExists) {
+                    sql = "INSERT INTO Vehicle (regn_number, type, fuel_type, transmission_type, special_details, rental_date, user) VALUES (?, ?, ?, ?, ?, ?, ?)";
+                    stmt = conn.prepareStatement(sql);
+                    stmt.setString(1, vehicle.getRegnNumber());
+                    stmt.setString(2, vehicleType);
+                    stmt.setString(3, vehicle.getFuelType().toString());
+                    stmt.setString(4, vehicle.getTransmissionType().toString());
+                    stmt.setString(5, jsonDetails);
+                    stmt.setTimestamp(6, new java.sql.Timestamp(System.currentTimeMillis()));
+                    stmt.setString(7, Login.getActiveUser().getUserId());
+                } else {
+                    sql = "INSERT INTO Vehicle (regn_number, fuel_type, transmission_type, special_details, rental_date, user) VALUES (?, ?, ?, ?, ?, ?)";
+                    stmt = conn.prepareStatement(sql);
+                    stmt.setString(1, vehicle.getRegnNumber());
+                    stmt.setString(2, vehicle.getFuelType().toString());
+                    stmt.setString(3, vehicle.getTransmissionType().toString());
+                    stmt.setString(4, jsonDetails);
+                    stmt.setTimestamp(5, new java.sql.Timestamp(System.currentTimeMillis()));
+                    stmt.setString(6, Login.getActiveUser().getUserId());
+                }
+            }
+            
+            int rowsAffected = stmt.executeUpdate();
+            if (rowsAffected > 0) {
+                if (Login.getActiveUser().isAdmin()) {
                     JOptionPane.showMessageDialog(frame, "Vehicle added successfully!", 
                         "Success", JOptionPane.INFORMATION_MESSAGE);
                 } else {
-                    JOptionPane.showMessageDialog(frame, "Failed to add vehicle!", 
-                        "Error", JOptionPane.ERROR_MESSAGE);
-                }
-            } else {
-                sql = "INSERT INTO Vehicle (regn_number, fuel_type, transmission_type, " +
-                             "special_details, rental_date, user) VALUES (?, ?, ?, ?, ?, ?)";
-                             
-                stmt = conn.prepareStatement(sql);
-
-                stmt.setString(1, vehicle.getRegnNumber());
-                stmt.setString(2, vehicle.getFuelType().toString());
-                stmt.setString(3, vehicle.getTransmissionType().toString());
-                stmt.setString(4, jsonDetails);
-                stmt.setDate(5, java.sql.Date.valueOf(LocalDate.now()));
-                stmt.setString(6, Login.getActiveUser().getUserId());
-                
-                int rowsAffected = stmt.executeUpdate();
-                if (rowsAffected > 0) {
                     JOptionPane.showMessageDialog(frame, "Vehicle request submitted successfully!", 
                         "Success", JOptionPane.INFORMATION_MESSAGE);
+                }
+            } else {
+                if (Login.getActiveUser().isAdmin()) {
+                    JOptionPane.showMessageDialog(frame, "Failed to add vehicle!", 
+                        "Error", JOptionPane.ERROR_MESSAGE);
                 } else {
                     JOptionPane.showMessageDialog(frame, "Failed to submit vehicle request!", 
                         "Error", JOptionPane.ERROR_MESSAGE);

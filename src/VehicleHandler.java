@@ -563,7 +563,6 @@ public class VehicleHandler extends MouseAdapter {
                         .setTruckType(truckType).setNumberOfAxles(numberOfAxles).setSpecialDetails(specialDetails);
             }
             
-            // For admin, store the new vehicle
             if (vehicle != null) {
                 System.out.println("Vehicle finalized: " + vehicle.getRegnNumber());
                 vehicle.setSpecialDetails(specialDetails);
@@ -571,7 +570,6 @@ public class VehicleHandler extends MouseAdapter {
                 return true;
             }
         } else {
-            // For non-admin users, rent an existing vehicle
             if (regnNumber.isEmpty()) {
                 JOptionPane.showMessageDialog(frame, "Please enter a registration number!", 
                     "Error", JOptionPane.ERROR_MESSAGE);
@@ -589,7 +587,7 @@ public class VehicleHandler extends MouseAdapter {
             if (vehicle != null) {
                 System.out.println("Vehicle rental request: " + vehicle.getRegnNumber());
                 vehicle.setSpecialDetails(specialDetails);
-                return rentVehicle(); // Call the new rent method for non-admin users
+                return rentVehicle();
             }
         }
         
@@ -603,11 +601,9 @@ public class VehicleHandler extends MouseAdapter {
         }
         
         try (Connection conn = DriverManager.getConnection(App.getDatabase()[0], App.getDatabase()[1], App.getDatabase()[2])) {
-            // First, fetch all vehicles with matching basic properties and count > 0
             PreparedStatement checkStmt;
             String checkSql;
             
-            // Check if type column exists
             boolean useTypeColumn = false;
             try {
                 Statement testStmt = conn.createStatement();
@@ -634,13 +630,11 @@ public class VehicleHandler extends MouseAdapter {
             
             ResultSet rs = checkStmt.executeQuery();
             
-            // For debugging: print what we're looking for
             System.out.println("Searching for vehicle:");
             System.out.println("Type: " + vehicleType);
             System.out.println("Fuel: " + vehicle.getFuelType());
             System.out.println("Transmission: " + vehicle.getTransmissionType());
             
-            // Print the special details we want
             System.out.println("Special details we want:");
             for (int i = 0; i < specialDetails.size(); i++) {
                 System.out.println("Detail " + i + ": " + specialDetails.get(i));
@@ -658,7 +652,6 @@ public class VehicleHandler extends MouseAdapter {
                 System.out.println("\nChecking vehicle ID: " + vehicleId);
                 System.out.println("DB Special details: " + dbSpecialDetails);
                 
-                // Now manually check if special details match
                 boolean detailsMatch = false;
                 
                 if (vehicleType.equals("Car")) {
@@ -684,7 +677,6 @@ public class VehicleHandler extends MouseAdapter {
             }
             
             if (foundMatch) {
-                // Update vehicle count
                 String updateSql = "UPDATE Vehicle SET count = count - 1 WHERE vehicle_id = ?";
                 PreparedStatement updateStmt = conn.prepareStatement(updateSql);
                 updateStmt.setInt(1, matchedVehicleId);
@@ -692,21 +684,7 @@ public class VehicleHandler extends MouseAdapter {
                 int rowsAffected = updateStmt.executeUpdate();
                 
                 if (rowsAffected > 0) {
-                    // Create rental history table if it doesn't exist
-                    String createTableSql = "CREATE TABLE IF NOT EXISTS RentalHistory (" +
-                                            "id INT PRIMARY KEY AUTO_INCREMENT, " +
-                                            "user_id VARCHAR(45) NOT NULL, " +
-                                            "vehicle_id INT NOT NULL, " +
-                                            "rental_date DATETIME NOT NULL, " +
-                                            "regn_number VARCHAR(45) NOT NULL, " +
-                                            "return_date DATETIME, " +
-                                            "FOREIGN KEY (user_id) REFERENCES User(username), " +
-                                            "FOREIGN KEY (vehicle_id) REFERENCES Vehicle(vehicle_id))";
                     
-                    PreparedStatement createTableStmt = conn.prepareStatement(createTableSql);
-                    createTableStmt.executeUpdate();
-                    
-                    // Insert rental record
                     String rentalSql = "INSERT INTO RentalHistory (user_id, vehicle_id, rental_date, regn_number) " +
                                        "VALUES (?, ?, ?, ?)";
                     
@@ -727,7 +705,6 @@ public class VehicleHandler extends MouseAdapter {
                     return false;
                 }
             } else {
-                // Optional: Dump all vehicles in database for debugging
                 System.out.println("\nAll vehicles in database:");
                 Statement stmt = conn.createStatement();
                 ResultSet allVehicles = stmt.executeQuery("SELECT * FROM Vehicle");
@@ -759,27 +736,18 @@ public class VehicleHandler extends MouseAdapter {
         }
         
         try (Connection conn = DriverManager.getConnection(App.getDatabase()[0], App.getDatabase()[1], App.getDatabase()[2])) {
-            // First, check if the type column exists, and add it if it doesn't
             try {
                 DatabaseMetaData md = conn.getMetaData();
                 ResultSet rs = md.getColumns(null, null, "Vehicle", "type");
                 
                 if (!rs.next()) {
-                    // The 'type' column doesn't exist, so add it
-                    Statement alterStmt = conn.createStatement();
-                    alterStmt.execute("ALTER TABLE Vehicle ADD COLUMN type VARCHAR(45)");
-                    
-                    // Update existing records with appropriate vehicle types based on special_details
                     Statement updateStmt = conn.createStatement();
                     updateStmt.execute("UPDATE Vehicle SET type = 'Car' WHERE special_details LIKE '%carType%'");
                     updateStmt.execute("UPDATE Vehicle SET type = 'Bike' WHERE special_details LIKE '%bikeType%'");
                     updateStmt.execute("UPDATE Vehicle SET type = 'Truck' WHERE special_details LIKE '%truckType%'");
-                    
-                    System.out.println("Added 'type' column to Vehicle table");
                 }
             } catch (SQLException e) {
                 System.out.println("Error checking or adding 'type' column: " + e.getMessage());
-                // Continue with original query without type column
             }
             
             StringBuilder jsonBuilder = new StringBuilder("{");
@@ -808,7 +776,6 @@ public class VehicleHandler extends MouseAdapter {
                 testStmt.execute("SELECT type FROM Vehicle LIMIT 1");
                 typeColumnExists = true;
             } catch (SQLException e) {
-                // Type column doesn't exist
                 System.out.println("Type column doesn't exist: " + e.getMessage());
             }
             

@@ -5,7 +5,7 @@ public class Vehicle {
     private String regnNumber;
     private FuelType fuelType;
     private double perDayRent;
-    private LocalDate startDate;
+    private LocalDate startDate, endDate;
     private TransmissionType transmissionType;
     private ArrayList<Object> specialDetails;
 
@@ -52,7 +52,12 @@ public class Vehicle {
     }
 
     public LocalDate getReturnDate() {
-        return startDate.plusMonths(1);
+        return endDate;
+    }
+
+    public Vehicle setReturnDate(int days) {
+        endDate = startDate.plusDays(days);
+        return this;
     }
 
     public double getPerDayRent() {

@@ -14,8 +14,8 @@ public class VehicleHandler extends MouseAdapter {
     private ArrayList<Object> specialDetails;
     private JComboBox<String> v, f, t;
     private JComboBox<String> model, numberOfSeats, engineDisplacement, weight, numberOfAxles;
-    private JTextField countField, rentField, regnNumberField;
-    private String count, rent, regnNumber;
+    private JTextField countField, rentField, regnNumberField, daysField;
+    private String count, rent, regnNumber, days;
 
     enum VEHICLE_PAGES {
         SELECT_PAGE, SPECIAL_DETAILS
@@ -123,9 +123,14 @@ public class VehicleHandler extends MouseAdapter {
         frame.add(rentField);
 
         regnNumberField = new JTextField(15);
-        regnNumberField.setBounds(600, 350, 200, 30);
+        regnNumberField.setBounds(300, 350, 200, 30);
         regnNumberField.setVisible(false);
         frame.add(regnNumberField);
+
+        daysField = new JTextField(15);
+        daysField.setBounds(950, 350, 200, 30);
+        daysField.setVisible(false);
+        frame.add(daysField);
     }
 
     public void updateSpecialDetails() {
@@ -454,6 +459,7 @@ public class VehicleHandler extends MouseAdapter {
         count = countField.getText();
         rent = rentField.getText();
         regnNumber = regnNumberField.getText();
+        days = daysField.getText();
         
         if (vehicleType == null || fuelType == null || transmissionType == null) {
             JOptionPane.showMessageDialog(frame, "Please fill in all base fields!", 
@@ -575,13 +581,19 @@ public class VehicleHandler extends MouseAdapter {
                     "Error", JOptionPane.ERROR_MESSAGE);
                 return false;
             }
+
+            if (days.isEmpty()) {
+                JOptionPane.showMessageDialog(frame, "Please enter number of days!", 
+                    "Error", JOptionPane.ERROR_MESSAGE);
+                return false;
+            }
             
             if (vehicleType.equals("Car")) {
-                vehicle = new Car(regnNumber, fuelType, transmissionType).setSpecialDetails(specialDetails);
+                vehicle = new Car(regnNumber, fuelType, transmissionType).setSpecialDetails(specialDetails).setReturnDate(Integer.parseInt(days));
             } else if (vehicleType.equals("Bike")) {
-                vehicle = new Bike(regnNumber, fuelType, transmissionType).setSpecialDetails(specialDetails);
+                vehicle = new Bike(regnNumber, fuelType, transmissionType).setSpecialDetails(specialDetails).setReturnDate(Integer.parseInt(days));
             } else if (vehicleType.equals("Truck")) {
-                vehicle = new Truck(regnNumber, fuelType, transmissionType).setSpecialDetails(specialDetails);
+                vehicle = new Truck(regnNumber, fuelType, transmissionType).setSpecialDetails(specialDetails).setReturnDate(Integer.parseInt(days));
             }
             
             if (vehicle != null) {
@@ -682,14 +694,15 @@ public class VehicleHandler extends MouseAdapter {
                 
                 if (rowsAffected > 0) {
                     
-                    String rentalSql = "INSERT INTO RentalHistory (user_id, vehicle_id, rental_date, regn_number) " +
-                                       "VALUES (?, ?, ?, ?)";
+                    String rentalSql = "INSERT INTO RentalHistory (user_id, vehicle_id, rental_date, return_date, regn_number) " +
+                                       "VALUES (?, ?, ?, ?, ?)";
                     
                     PreparedStatement rentalStmt = conn.prepareStatement(rentalSql);
                     rentalStmt.setString(1, Login.getActiveUser().getUserId());
                     rentalStmt.setInt(2, matchedVehicleId);
-                    rentalStmt.setTimestamp(3, new java.sql.Timestamp(System.currentTimeMillis()));
-                    rentalStmt.setString(4, vehicle.getRegnNumber());
+                    rentalStmt.setDate(3, Date.valueOf(vehicle.getRentalDate()));
+                    rentalStmt.setDate(4, Date.valueOf(vehicle.getReturnDate()));
+                    rentalStmt.setString(5, vehicle.getRegnNumber());
                     
                     rentalStmt.executeUpdate();
                     
@@ -899,6 +912,7 @@ public class VehicleHandler extends MouseAdapter {
         countField.setVisible(false);
         rentField.setVisible(false);
         regnNumberField.setVisible(false);
+        daysField.setVisible(false);
     }
     
     private void showMainComponents() {
@@ -910,6 +924,7 @@ public class VehicleHandler extends MouseAdapter {
             rentField.setVisible(true);
         } else {
             regnNumberField.setVisible(true);
+            daysField.setVisible(true);
         }
     }
     
@@ -945,7 +960,8 @@ public class VehicleHandler extends MouseAdapter {
                 g.drawString("Count", 550, 220);
                 g.drawString("Rent", 550, 370);
             } else {
-                g.drawString("Registration Number", 450, 370);
+                g.drawString("Registration Number", 150, 370);
+                g.drawString("Rent Days", 870, 370);
             }
 
             textWidth = fm.stringWidth("Special Details");

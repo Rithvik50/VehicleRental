@@ -1,6 +1,8 @@
 import java.awt.*;
 import java.awt.event.*;
 import java.sql.*;
+import java.time.LocalDate;
+
 import javax.swing.*;
 import java.util.ArrayList;
 
@@ -460,156 +462,73 @@ public class VehicleHandler extends MouseAdapter {
         rent = rentField.getText();
         regnNumber = regnNumberField.getText();
         days = daysField.getText();
-        
+
+        System.out.println("Debug: regnNumber = " + regnNumber);
+        System.out.println("Debug: days = " + days);
+        System.out.println("Debug: vehicleType = " + vehicleType);
+        System.out.println("Debug: fuelType = " + fuelType);
+        System.out.println("Debug: transmissionType = " + transmissionType);
+        System.out.println("Debug: specialDetails = " + specialDetails);
+        System.out.println("Debug: startDate = " + LocalDate.now());
+
         if (vehicleType == null || fuelType == null || transmissionType == null) {
             JOptionPane.showMessageDialog(frame, "Please fill in all base fields!", 
                 "Error", JOptionPane.ERROR_MESSAGE);
             return false;
         }
-        
-        if (specialDetails.isEmpty() || 
-            (vehicleType.equals("Car") && specialDetails.size() < 2) ||
-            (vehicleType.equals("Bike") && specialDetails.size() < 3) ||
-            (vehicleType.equals("Truck") && specialDetails.size() < 2)) {
-            JOptionPane.showMessageDialog(frame, "Please select all special details fields!", 
-                "Error", JOptionPane.ERROR_MESSAGE);
-            return false;
-        }
-        
-        boolean hasEmptyValue = false;
-        for (Object detail : specialDetails) {
-            if (detail == null || detail.toString().isEmpty()) {
-                hasEmptyValue = true;
-                break;
-            }
-        }
-        
-        if (hasEmptyValue) {
-            JOptionPane.showMessageDialog(frame, "Please select all special details fields!", 
-                "Error", JOptionPane.ERROR_MESSAGE);
-            return false;
-        }
-    
-        if (Login.getActiveUser().isAdmin()) {
-            if (count.isEmpty() || rent.isEmpty()) {
-                JOptionPane.showMessageDialog(frame, "Please fill in all administrative fields!", 
-                    "Error", JOptionPane.ERROR_MESSAGE);
-                return false;
-            }
-            
-            try {
-                Double.parseDouble(rent);
-                Integer.parseInt(count);
-            } catch (NumberFormatException e) {
-                JOptionPane.showMessageDialog(frame, "Rent and count must be valid numbers!", 
-                    "Error", JOptionPane.ERROR_MESSAGE);
-                return false;
-            }
-            
-            if (vehicleType.equals("Car")) {
-                String carTypeStr = specialDetails.get(0).toString();
-                Car.CarType carType = null;
-                try {
-                    carType = Car.CarType.valueOf(carTypeStr.toUpperCase());
-                } catch (IllegalArgumentException e) {
-                    if (carTypeStr.equals("SUV")) {
-                        carType = Car.CarType.SUV;
-                    } else if (carTypeStr.equals("Sedan")) {
-                        carType = Car.CarType.SEDAN;
-                    } else if (carTypeStr.equals("Hatchback")) {
-                        carType = Car.CarType.HATCHBACK;
-                    }
-                }
-                
-                int numberOfSeats = Integer.parseInt(specialDetails.get(1).toString());
-                vehicle = new Car(fuelType, transmissionType, Double.parseDouble(rent))
-                        .setCarType(carType).setNumberOfSeats(numberOfSeats).setSpecialDetails(specialDetails);
-            } else if (vehicleType.equals("Bike")) {
-                String bikeTypeStr = specialDetails.get(0).toString();
-                Bike.BikeType bikeType = null;
-                try {
-                    bikeType = Bike.BikeType.valueOf(bikeTypeStr.toUpperCase());
-                } catch (IllegalArgumentException e) {
-                    if (bikeTypeStr.equals("Racing")) {
-                        bikeType = Bike.BikeType.RACING;
-                    } else if (bikeTypeStr.equals("Cruiser")) {
-                        bikeType = Bike.BikeType.CRUISER;
-                    } else if (bikeTypeStr.equals("City")) {
-                        bikeType = Bike.BikeType.CITY;
-                    }
-                }
-                
-                String engineStr = specialDetails.get(1).toString();
-                int engineDisplacement = Integer.parseInt(engineStr.replace("cc", ""));
-                
-                String weightStr = specialDetails.get(2).toString();
-                double weight = Double.parseDouble(weightStr.replace("kg", ""));
-                
-                vehicle = new Bike(fuelType, transmissionType, Double.parseDouble(rent))
-                        .setBikeType(bikeType).setEngineDisplacement(engineDisplacement).setWeight(weight).setSpecialDetails(specialDetails);
-            } else if (vehicleType.equals("Truck")) {
-                String truckTypeStr = specialDetails.get(0).toString();
-                Truck.TruckType truckType = null;
-                try {
-                    truckType = Truck.TruckType.valueOf(truckTypeStr.toUpperCase().replace(" ", "_"));
-                } catch (IllegalArgumentException e) {
-                    if (truckTypeStr.equals("Flatbed")) {
-                        truckType = Truck.TruckType.FLATBED;
-                    } else if (truckTypeStr.equals("Heavy Duty")) {
-                        truckType = Truck.TruckType.HEAVY_DUTY;
-                    } else if (truckTypeStr.equals("Light Duty")) {
-                        truckType = Truck.TruckType.LIGHT_DUTY;
-                    } else if (truckTypeStr.equals("Box")) {
-                        truckType = Truck.TruckType.BOX;
-                    }
-                }
-                
-                int numberOfAxles = Integer.parseInt(specialDetails.get(1).toString());
-                vehicle = new Truck(fuelType, transmissionType, Double.parseDouble(rent))
-                        .setTruckType(truckType).setNumberOfAxles(numberOfAxles).setSpecialDetails(specialDetails);
-            }
-            
-            if (vehicle != null) {
-                System.out.println("Vehicle finalized: " + vehicle.getRegnNumber());
-                vehicle.setSpecialDetails(specialDetails);
-                storeVehicle();
-                return true;
-            }
-        } else {
-            if (regnNumber.isEmpty()) {
-                JOptionPane.showMessageDialog(frame, "Please enter a registration number!", 
-                    "Error", JOptionPane.ERROR_MESSAGE);
-                return false;
-            }
 
-            if (days.isEmpty()) {
-                JOptionPane.showMessageDialog(frame, "Please enter number of days!", 
+        if (specialDetails.isEmpty() || specialDetails.contains(null)) {
+            JOptionPane.showMessageDialog(frame, "Please select all special details fields!", 
+                "Error", JOptionPane.ERROR_MESSAGE);
+            return false;
+        }
+
+        try {
+            int rentalDays = Integer.parseInt(days);
+            if (rentalDays <= 0) {
+                JOptionPane.showMessageDialog(frame, "Number of days must be greater than 0!", 
                     "Error", JOptionPane.ERROR_MESSAGE);
                 return false;
             }
-            
-            if (vehicleType.equals("Car")) {
-                vehicle = new Car(regnNumber, fuelType, transmissionType)
-                        .setSpecialDetails(specialDetails)
-                        .setReturnDate(Integer.parseInt(days));
-            } else if (vehicleType.equals("Bike")) {
-                vehicle = new Bike(regnNumber, fuelType, transmissionType)
-                        .setSpecialDetails(specialDetails)
-                        .setReturnDate(Integer.parseInt(days));
-            } else if (vehicleType.equals("Truck")) {
-                vehicle = new Truck(regnNumber, fuelType, transmissionType)
-                        .setSpecialDetails(specialDetails)
-                        .setReturnDate(Integer.parseInt(days));
-            }
-            
-            if (vehicle != null) {
-                System.out.println("Vehicle rental request: " + vehicle.getRegnNumber());
-                System.out.println("Special details set: " + specialDetails);
-                return rentVehicle();
-            }
+        } catch (NumberFormatException e) {
+            JOptionPane.showMessageDialog(frame, "Please enter a valid number of days!", 
+                "Error", JOptionPane.ERROR_MESSAGE);
+            return false;
         }
-        
-        return false;
+
+        if (vehicleType.equals("Car")) {
+            System.out.println("Creating Car object...");
+            vehicle = new Car(regnNumber, fuelType, transmissionType)
+                    .setSpecialDetails(specialDetails);
+            vehicle.setRentalDate(LocalDate.now());
+            vehicle.setReturnDate(Integer.parseInt(days));
+        } else if (vehicleType.equals("Bike")) {
+            System.out.println("Creating Bike object...");
+            vehicle = new Bike(regnNumber, fuelType, transmissionType)
+                    .setSpecialDetails(specialDetails);
+            vehicle.setRentalDate(LocalDate.now());
+            vehicle.setReturnDate(Integer.parseInt(days));
+        } else if (vehicleType.equals("Truck")) {
+            System.out.println("Creating Truck object...");
+            vehicle = new Truck(regnNumber, fuelType, transmissionType)
+                    .setSpecialDetails(specialDetails);
+            vehicle.setRentalDate(LocalDate.now());
+            vehicle.setReturnDate(Integer.parseInt(days));
+        } else {
+            JOptionPane.showMessageDialog(frame, "Invalid vehicle type selected!", 
+                "Error", JOptionPane.ERROR_MESSAGE);
+            return false;
+        }
+
+        if (vehicle == null) {
+            JOptionPane.showMessageDialog(frame, "Failed to create vehicle object!", 
+                "Error", JOptionPane.ERROR_MESSAGE);
+            return false;
+        }
+
+        System.out.println("Vehicle rental request: " + vehicle.getRegnNumber());
+        System.out.println("Special details set: " + specialDetails);
+        return rentVehicle();
     }
 
     public void resetFields() {

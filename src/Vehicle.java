@@ -51,6 +51,10 @@ public class Vehicle {
         return startDate;
     }
 
+    public void setRentalDate(LocalDate startDate) {
+        this.startDate = startDate;
+    }
+
     public LocalDate getReturnDate() {
         return endDate;
     }

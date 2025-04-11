@@ -589,16 +589,22 @@ public class VehicleHandler extends MouseAdapter {
             }
             
             if (vehicleType.equals("Car")) {
-                vehicle = new Car(regnNumber, fuelType, transmissionType).setSpecialDetails(specialDetails).setReturnDate(Integer.parseInt(days));
+                vehicle = new Car(regnNumber, fuelType, transmissionType)
+                        .setSpecialDetails(specialDetails)
+                        .setReturnDate(Integer.parseInt(days));
             } else if (vehicleType.equals("Bike")) {
-                vehicle = new Bike(regnNumber, fuelType, transmissionType).setSpecialDetails(specialDetails).setReturnDate(Integer.parseInt(days));
+                vehicle = new Bike(regnNumber, fuelType, transmissionType)
+                        .setSpecialDetails(specialDetails)
+                        .setReturnDate(Integer.parseInt(days));
             } else if (vehicleType.equals("Truck")) {
-                vehicle = new Truck(regnNumber, fuelType, transmissionType).setSpecialDetails(specialDetails).setReturnDate(Integer.parseInt(days));
+                vehicle = new Truck(regnNumber, fuelType, transmissionType)
+                        .setSpecialDetails(specialDetails)
+                        .setReturnDate(Integer.parseInt(days));
             }
             
             if (vehicle != null) {
                 System.out.println("Vehicle rental request: " + vehicle.getRegnNumber());
-                vehicle.setSpecialDetails(specialDetails);
+                System.out.println("Special details set: " + specialDetails);
                 return rentVehicle();
             }
         }
@@ -804,43 +810,76 @@ public class VehicleHandler extends MouseAdapter {
             String jsonDetails = jsonBuilder.toString();
             
             if (Login.getActiveUser().isAdmin()) {
-                PreparedStatement checkStmt;
                 String checkSql;
+                PreparedStatement checkStmt;
                 
                 if (typeColumnExists) {
-                    checkSql = "SELECT vehicle_id, count FROM Vehicle WHERE type = ? AND fuel_type = ? AND transmission_type = ? AND rent = ? AND special_details = ?";
+                    checkSql = "SELECT vehicle_id, count FROM Vehicle " +
+                              "WHERE type = ? AND fuel_type = ? AND transmission_type = ? " +
+                              "AND ABS(rent - ?) < 0.01";
                     checkStmt = conn.prepareStatement(checkSql);
                     checkStmt.setString(1, vehicleType);
                     checkStmt.setString(2, vehicle.getFuelType().toString());
                     checkStmt.setString(3, vehicle.getTransmissionType().toString());
                     checkStmt.setDouble(4, vehicle.getPerDayRent());
-                    checkStmt.setString(5, jsonDetails);
                 } else {
-                    checkSql = "SELECT vehicle_id, count FROM Vehicle WHERE fuel_type = ? AND transmission_type = ? AND rent = ? AND special_details = ?";
+                    checkSql = "SELECT vehicle_id, count FROM Vehicle " +
+                              "WHERE fuel_type = ? AND transmission_type = ? " +
+                              "AND ABS(rent - ?) < 0.01";
                     checkStmt = conn.prepareStatement(checkSql);
                     checkStmt.setString(1, vehicle.getFuelType().toString());
                     checkStmt.setString(2, vehicle.getTransmissionType().toString());
                     checkStmt.setDouble(3, vehicle.getPerDayRent());
-                    checkStmt.setString(4, jsonDetails);
                 }
                 
                 ResultSet rs = checkStmt.executeQuery();
                 
-                if (rs.next()) {
+                boolean foundMatch = false;
+                int matchedVehicleId = -1;
+                
+                while (rs.next()) {
                     int vehicleId = rs.getInt("vehicle_id");
-                    int currentCount = rs.getInt("count");
-                    int newCount = currentCount + Integer.parseInt(count);
                     
-                    String updateSql = "UPDATE Vehicle SET count = ? WHERE vehicle_id = ?";
-                    PreparedStatement updateStmt = conn.prepareStatement(updateSql);
-                    updateStmt.setInt(1, newCount);
-                    updateStmt.setInt(2, vehicleId);
+                    PreparedStatement detailsStmt = conn.prepareStatement("SELECT special_details FROM Vehicle WHERE vehicle_id = ?");
+                    detailsStmt.setInt(1, vehicleId);
+                    ResultSet detailsRs = detailsStmt.executeQuery();
+                    
+                    if (detailsRs.next()) {
+                        String dbSpecialDetails = detailsRs.getString("special_details");
+                        
+                        boolean detailsMatch = compareSpecialDetails(jsonDetails, dbSpecialDetails);
+                        
+                        if (detailsMatch) {
+                            foundMatch = true;
+                            matchedVehicleId = vehicleId;
+                            break;
+                        }
+                    }
+                    detailsRs.close();
+                }
+                
+                if (foundMatch) {
+                    String updateSql;
+                    PreparedStatement updateStmt;
+                    
+                    updateSql = "UPDATE Vehicle SET count = count + ? WHERE vehicle_id = ?";
+                    updateStmt = conn.prepareStatement(updateSql);
+                    updateStmt.setInt(1, Integer.parseInt(count));
+                    updateStmt.setInt(2, matchedVehicleId);
                     
                     int rowsAffected = updateStmt.executeUpdate();
                     
                     if (rowsAffected > 0) {
+                        String getCurrentSql = "SELECT count FROM Vehicle WHERE vehicle_id = ?";
+                        PreparedStatement getCurrentStmt = conn.prepareStatement(getCurrentSql);
+                        getCurrentStmt.setInt(1, matchedVehicleId);
+                        
+                        ResultSet currentRs = getCurrentStmt.executeQuery();
+                        currentRs.next();
+                        int newTotal = currentRs.getInt("count");
+                        
                         JOptionPane.showMessageDialog(frame, 
-                            "Vehicle inventory updated successfully! Count increased from " + currentCount + " to " + newCount, 
+                            "Vehicle inventory updated successfully! Added " + count + " more vehicles. New total: " + newTotal, 
                             "Success", JOptionPane.INFORMATION_MESSAGE);
                         resetFields();
                     } else {
@@ -852,7 +891,8 @@ public class VehicleHandler extends MouseAdapter {
                     String insertSql;
                     
                     if (typeColumnExists) {
-                        insertSql = "INSERT INTO Vehicle (type, fuel_type, transmission_type, rent, special_details, count) VALUES (?, ?, ?, ?, ?, ?)";
+                        insertSql = "INSERT INTO Vehicle (type, fuel_type, transmission_type, rent, special_details, count) " +
+                                   "VALUES (?, ?, ?, ?, ?, ?)";
                         insertStmt = conn.prepareStatement(insertSql);
                         insertStmt.setString(1, vehicleType);
                         insertStmt.setString(2, vehicle.getFuelType().toString());
@@ -861,7 +901,8 @@ public class VehicleHandler extends MouseAdapter {
                         insertStmt.setString(5, jsonDetails);
                         insertStmt.setInt(6, Integer.parseInt(count));
                     } else {
-                        insertSql = "INSERT INTO Vehicle (fuel_type, transmission_type, rent, special_details, count) VALUES (?, ?, ?, ?, ?)";
+                        insertSql = "INSERT INTO Vehicle (fuel_type, transmission_type, rent, special_details, count) " +
+                                   "VALUES (?, ?, ?, ?, ?)";
                         insertStmt = conn.prepareStatement(insertSql);
                         insertStmt.setString(1, vehicle.getFuelType().toString());
                         insertStmt.setString(2, vehicle.getTransmissionType().toString());
@@ -873,7 +914,7 @@ public class VehicleHandler extends MouseAdapter {
                     int rowsAffected = insertStmt.executeUpdate();
                     
                     if (rowsAffected > 0) {
-                        JOptionPane.showMessageDialog(frame, "New vehicle added successfully!", 
+                        JOptionPane.showMessageDialog(frame, "New vehicle added successfully! Count: " + count, 
                             "Success", JOptionPane.INFORMATION_MESSAGE);
                         resetFields();
                     } else {
@@ -920,6 +961,34 @@ public class VehicleHandler extends MouseAdapter {
             e.printStackTrace();
             JOptionPane.showMessageDialog(frame, "Database error: " + e.getMessage(), 
                 "Error", JOptionPane.ERROR_MESSAGE);
+        }
+    }
+    
+    private boolean compareSpecialDetails(String json1, String json2) {
+        try {
+            if (vehicleType.equals("Car")) {
+                return json1.contains(specialDetails.get(0).toString()) && 
+                       json2.contains(specialDetails.get(0).toString()) &&
+                       json1.contains(specialDetails.get(1).toString()) &&
+                       json2.contains(specialDetails.get(1).toString());
+            } else if (vehicleType.equals("Bike")) {
+                return json1.contains(specialDetails.get(0).toString()) && 
+                       json2.contains(specialDetails.get(0).toString()) &&
+                       json1.contains(specialDetails.get(1).toString()) &&
+                       json2.contains(specialDetails.get(1).toString()) &&
+                       json1.contains(specialDetails.get(2).toString()) &&
+                       json2.contains(specialDetails.get(2).toString());
+            } else if (vehicleType.equals("Truck")) {
+                return json1.contains(specialDetails.get(0).toString()) && 
+                       json2.contains(specialDetails.get(0).toString()) &&
+                       json1.contains(specialDetails.get(1).toString()) &&
+                       json2.contains(specialDetails.get(1).toString());
+            }
+            
+            return false;
+        } catch (Exception e) {
+            System.out.println("Error comparing special details: " + e.getMessage());
+            return false;
         }
     }
 

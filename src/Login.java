@@ -57,7 +57,7 @@ public class Login extends MouseAdapter {
         String password = new String(passwordField.getPassword());
     
         try (Connection conn = DriverManager.getConnection(App.getDatabase()[0], App.getDatabase()[1], App.getDatabase()[2])) {
-            String query = "SELECT hash, salt, admin, insurance, coverage FROM User WHERE username = ?";
+            String query = "SELECT hash, salt, admin, insurance FROM User WHERE username = ?";
             try (PreparedStatement stmt = conn.prepareStatement(query)) {
                 stmt.setString(1, username);
                 ResultSet rs = stmt.executeQuery();
@@ -69,7 +69,7 @@ public class Login extends MouseAdapter {
                     String computedHash = hashPassword(password, storedSalt);
                     if (computedHash.equals(storedHash)) {
                         loggedIn = true;
-                        activeUser = new User(username, rs.getBoolean("admin"), new Insurance(rs.getString("insurance"), rs.getDouble("coverage")));
+                        activeUser = new User(username, rs.getBoolean("admin"), new Insurance(rs.getDouble("insurance")));
                         JOptionPane.showMessageDialog(frame, "Login successful! Welcome, " + username + "!", "Success", JOptionPane.INFORMATION_MESSAGE);
                         pages = LOGIN_PAGES.MENU_PAGE;
     
@@ -117,7 +117,7 @@ public class Login extends MouseAdapter {
                 insertStmt.setString(1, username);
                 insertStmt.setString(2, hash);
                 insertStmt.setString(3, salt);
-                insertStmt.setString(4, insurance);
+                insertStmt.setDouble(4, Double.parseDouble(insurance));
                 insertStmt.executeUpdate();
                 JOptionPane.showMessageDialog(frame, "Registration successful!", "Success", JOptionPane.INFORMATION_MESSAGE);
                 pages = LOGIN_PAGES.MENU_PAGE;

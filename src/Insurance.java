@@ -1,14 +1,8 @@
 public class Insurance {
-    private String insuranceCompany;
     private double coverage;
 
-    public Insurance(String insuranceCompany, double coverage) {
-        this.insuranceCompany = insuranceCompany;
+    public Insurance(double coverage) {
         this.coverage = coverage;
-    }
-
-    public String getInsuranceCompany() {
-        return insuranceCompany;
     }
 
     public double getCoverage() {

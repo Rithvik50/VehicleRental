@@ -37,17 +37,31 @@ public class User {
     public List<Vehicle> getRentedVehicles() {
         rentedVehicles.clear();
         
-        String sql = "SELECT regn_number, fuel_type, transmission_type, rent, special_details, rental_date FROM Vehicle " +
-                    "WHERE user_id = ? ORDER BY rental_date ASC";
-
+        String sql = "SELECT regn_number, fuel_type, transmission_type, special_details, rental_date FROM RentalHistory " +
+                     "WHERE user_id = ? ORDER BY rental_date ASC";
+    
         try (Connection conn = DriverManager.getConnection(App.getDatabase()[0], App.getDatabase()[1], App.getDatabase()[2]);
-            PreparedStatement stmt = conn.prepareStatement(sql)) {
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
             
             stmt.setString(1, userId);
             ResultSet rs = stmt.executeQuery();
     
             while (rs.next()) {
-                Vehicle vehicle = null; // Deal with this
+                Vehicle vehicle = new Vehicle(
+                    rs.getString("regn_number"),
+                    FuelType.valueOf(rs.getString("fuel_type")),
+                    TransmissionType.valueOf(rs.getString("transmission_type"))
+                );
+                vehicle.setRentalDate(rs.getDate("rental_date").toLocalDate());
+    
+                String specialDetailsJson = rs.getString("special_details");
+                if (specialDetailsJson != null && !specialDetailsJson.isEmpty()) {
+                    vehicle.setSpecialDetails(new Gson().fromJson(specialDetailsJson, new TypeToken<ArrayList<Object>>() {}.getType()));
+                } else {
+                    vehicle.setSpecialDetails(new ArrayList<>()); // Set an empty list if null or empty
+                }
+    
+                rentedVehicles.add(vehicle);
             }
         } catch (SQLException e) {
             e.printStackTrace();

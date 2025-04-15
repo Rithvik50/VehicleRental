@@ -60,7 +60,7 @@ public class User {
                 } else {
                     vehicle.setSpecialDetails(new ArrayList<>()); // Set an empty list if null or empty
                 }
-    
+                
                 rentedVehicles.add(vehicle);
             }
         } catch (SQLException e) {

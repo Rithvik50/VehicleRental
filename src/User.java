@@ -37,34 +37,82 @@ public class User {
     public List<Vehicle> getRentedVehicles() {
         rentedVehicles.clear();
         
-        String sql = "SELECT regn_number, fuel_type, transmission_type, special_details, rental_date FROM RentalHistory " +
-                     "WHERE user_id = ? ORDER BY rental_date ASC";
-    
+        String sql = "SELECT rh.vehicle_id, rh.regn_number, rh.rental_date, rh.return_date, " +
+                     "v.type, v.fuel_type, v.transmission_type, v.special_details, v.rent " +
+                     "FROM RentalHistory rh " +
+                     "JOIN Vehicle v ON rh.vehicle_id = v.vehicle_id " +
+                     "WHERE rh.user_id = ? " +
+                     "ORDER BY rh.rental_date DESC";
+        
         try (Connection conn = DriverManager.getConnection(App.getDatabase()[0], App.getDatabase()[1], App.getDatabase()[2]);
              PreparedStatement stmt = conn.prepareStatement(sql)) {
             
             stmt.setString(1, userId);
             ResultSet rs = stmt.executeQuery();
-    
+            
             while (rs.next()) {
-                Vehicle vehicle = new Vehicle(
-                    rs.getString("regn_number"),
-                    FuelType.valueOf(rs.getString("fuel_type")),
-                    TransmissionType.valueOf(rs.getString("transmission_type"))
-                );
-                vehicle.setRentalDate(rs.getDate("rental_date").toLocalDate());
-    
-                String specialDetailsJson = rs.getString("special_details");
-                if (specialDetailsJson != null && !specialDetailsJson.isEmpty()) {
-                    vehicle.setSpecialDetails(new Gson().fromJson(specialDetailsJson, new TypeToken<ArrayList<Object>>() {}.getType()));
+                String vehicleType = rs.getString("type");
+                String regnNumber = rs.getString("regn_number");
+                FuelType fuelType = FuelType.valueOf(rs.getString("fuel_type"));
+                TransmissionType transmissionType = TransmissionType.valueOf(rs.getString("transmission_type"));
+                
+                Vehicle vehicle;
+                
+                if ("Car".equals(vehicleType)) {
+                    vehicle = new Car(regnNumber, fuelType, transmissionType);
+                } else if ("Bike".equals(vehicleType)) {
+                    vehicle = new Bike(regnNumber, fuelType, transmissionType);
+                } else if ("Truck".equals(vehicleType)) {
+                    vehicle = new Truck(regnNumber, fuelType, transmissionType);
                 } else {
-                    vehicle.setSpecialDetails(new ArrayList<>()); // Set an empty list if null or empty
+                    vehicle = new Vehicle(regnNumber, fuelType, transmissionType);
+                }
+                
+                vehicle.setRentalDate(rs.getDate("rental_date").toLocalDate());
+                
+                if (rs.getDate("return_date") != null) {
+                    java.time.LocalDate rentalDate = rs.getDate("rental_date").toLocalDate();
+                    java.time.LocalDate returnDate = rs.getDate("return_date").toLocalDate();
+                    int days = java.time.Period.between(rentalDate, returnDate).getDays();
+                    vehicle.setReturnDate(days);
+                }
+                
+                vehicle.setPerDayRent(rs.getDouble("rent"));
+                
+                String specialDetailsJson = rs.getString("special_details");
+                try {
+                    if (specialDetailsJson != null && !specialDetailsJson.isEmpty()) {
+                        Gson gson = new Gson();
+                        java.lang.reflect.Type mapType = new TypeToken<java.util.Map<String, String>>(){}.getType();
+                        java.util.Map<String, String> detailsMap = gson.fromJson(specialDetailsJson, mapType);
+                        
+                        ArrayList<Object> detailsList = new ArrayList<>();
+                        if ("Car".equals(vehicleType)) {
+                            detailsList.add(detailsMap.get("carType"));
+                            detailsList.add(detailsMap.get("numberOfSeats"));
+                        } else if ("Bike".equals(vehicleType)) {
+                            detailsList.add(detailsMap.get("bikeType"));
+                            detailsList.add(detailsMap.get("engineDisplacement"));
+                            detailsList.add(detailsMap.get("weight"));
+                        } else if ("Truck".equals(vehicleType)) {
+                            detailsList.add(detailsMap.get("truckType"));
+                            detailsList.add(detailsMap.get("numberOfAxles"));
+                        }
+                        
+                        vehicle.setSpecialDetails(detailsList);
+                    } else {
+                        vehicle.setSpecialDetails(new ArrayList<>());
+                    }
+                } catch (Exception e) {
+                    System.out.println("Error parsing special details: " + e.getMessage());
+                    vehicle.setSpecialDetails(new ArrayList<>());
                 }
                 
                 rentedVehicles.add(vehicle);
             }
         } catch (SQLException e) {
             e.printStackTrace();
+            System.out.println("Error retrieving rented vehicles: " + e.getMessage());
         }
         
         return rentedVehicles;

@@ -28,7 +28,10 @@ public class Payment extends MouseAdapter {
     public double calculateTotalRent() {
         double totalCost = 0;
         for (Vehicle v : Login.getActiveUser().getRentedVehicles()) {
-            totalCost += v.getPerDayRent();
+            if (v.getRentalDate() != null && v.getReturnDate() != null && !v.isRented()) {
+                long days = java.time.temporal.ChronoUnit.DAYS.between(v.getRentalDate(), v.getReturnDate());
+                totalCost += days * v.getPerDayRent();
+            }
         }
         return totalCost;
     }

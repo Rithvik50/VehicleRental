@@ -8,6 +8,7 @@ public class Vehicle {
     private LocalDate startDate, endDate;
     private TransmissionType transmissionType;
     private ArrayList<Object> specialDetails;
+    private boolean rented = false;
 
     public Vehicle(String regnNumber, FuelType fuelType, TransmissionType transmissionType) {
         this.regnNumber = regnNumber;
@@ -79,6 +80,14 @@ public class Vehicle {
     public Vehicle setSpecialDetails(ArrayList<Object> specialDetails) {
         this.specialDetails = specialDetails;
         return this;
+    }
+
+    public boolean isRented() {
+        return rented;
+    }
+    
+    public void setRented(boolean rented) {
+        this.rented = rented;
     }
 
     public void displayDetails() {

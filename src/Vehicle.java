@@ -68,6 +68,10 @@ public class Vehicle {
         return perDayRent;
     }
 
+    public void setPerDayRent(double perDayRent) {
+        this.perDayRent = perDayRent;
+    }
+
     public ArrayList<Object> getSpecialDetails() {
         return specialDetails;
     }

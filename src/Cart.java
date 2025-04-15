@@ -23,7 +23,7 @@ public class Cart extends MouseAdapter {
     }
 
     public void render(Graphics g) {
-        rentedVehicles = Login.getActiveUser().getRentedVehicles(); // Fetch rented vehicles
+        //rentedVehicles = Login.getActiveUser().getRentedVehicles(); // Fetch rented vehicles
         g.setColor(Color.WHITE);
         g.fillRect(600, 600, 200, 50);
         FontMetrics fm = g.getFontMetrics();

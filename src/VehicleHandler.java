@@ -4,7 +4,12 @@ import java.sql.*;
 import java.time.LocalDate;
 
 import javax.swing.*;
+
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
+
 import java.util.ArrayList;
+import java.util.Map;
 
 public class VehicleHandler extends MouseAdapter {
     private Window window;
@@ -89,7 +94,7 @@ public class VehicleHandler extends MouseAdapter {
                 vehicleType = newVehicleType;
             }
         });
-
+        
         f.addActionListener(e -> {
             if (f.getSelectedItem() != null) {
                 String fuel = f.getSelectedItem().toString();
@@ -102,7 +107,7 @@ public class VehicleHandler extends MouseAdapter {
                 }
             }
         });
-
+        
         t.addActionListener(e -> {
             if (t.getSelectedItem() != null) {
                 String transmission = t.getSelectedItem().toString();
@@ -462,73 +467,93 @@ public class VehicleHandler extends MouseAdapter {
         rent = rentField.getText();
         regnNumber = regnNumberField.getText();
         days = daysField.getText();
-
-        System.out.println("Debug: regnNumber = " + regnNumber);
-        System.out.println("Debug: days = " + days);
+    
+        // Debugging logs
         System.out.println("Debug: vehicleType = " + vehicleType);
         System.out.println("Debug: fuelType = " + fuelType);
         System.out.println("Debug: transmissionType = " + transmissionType);
         System.out.println("Debug: specialDetails = " + specialDetails);
-        System.out.println("Debug: startDate = " + LocalDate.now());
-
+        System.out.println("Debug: regnNumber = " + regnNumber);
+        System.out.println("Debug: days = " + days);
+    
         if (vehicleType == null || fuelType == null || transmissionType == null) {
             JOptionPane.showMessageDialog(frame, "Please fill in all base fields!", 
                 "Error", JOptionPane.ERROR_MESSAGE);
             return false;
         }
-
+    
         if (specialDetails.isEmpty() || specialDetails.contains(null)) {
             JOptionPane.showMessageDialog(frame, "Please select all special details fields!", 
                 "Error", JOptionPane.ERROR_MESSAGE);
             return false;
         }
-
-        try {
-            int rentalDays = Integer.parseInt(days);
-            if (rentalDays <= 0) {
-                JOptionPane.showMessageDialog(frame, "Number of days must be greater than 0!", 
+    
+        if (!Login.getActiveUser().isAdmin()) {
+            try {
+                int rentalDays = Integer.parseInt(days);
+                if (rentalDays <= 0) {
+                    JOptionPane.showMessageDialog(frame, "Number of days must be greater than 0!", 
+                        "Error", JOptionPane.ERROR_MESSAGE);
+                    return false;
+                }
+            } catch (NumberFormatException e) {
+                JOptionPane.showMessageDialog(frame, "Please enter a valid number of days!", 
                     "Error", JOptionPane.ERROR_MESSAGE);
                 return false;
             }
-        } catch (NumberFormatException e) {
-            JOptionPane.showMessageDialog(frame, "Please enter a valid number of days!", 
-                "Error", JOptionPane.ERROR_MESSAGE);
-            return false;
         }
-
+    
         if (vehicleType.equals("Car")) {
             System.out.println("Creating Car object...");
             vehicle = new Car(regnNumber, fuelType, transmissionType)
                     .setSpecialDetails(specialDetails);
             vehicle.setRentalDate(LocalDate.now());
-            vehicle.setReturnDate(Integer.parseInt(days));
+            if (!Login.getActiveUser().isAdmin()) {
+                vehicle.setReturnDate(Integer.parseInt(days));
+            }
         } else if (vehicleType.equals("Bike")) {
             System.out.println("Creating Bike object...");
             vehicle = new Bike(regnNumber, fuelType, transmissionType)
                     .setSpecialDetails(specialDetails);
             vehicle.setRentalDate(LocalDate.now());
-            vehicle.setReturnDate(Integer.parseInt(days));
+            if (!Login.getActiveUser().isAdmin()) {
+                vehicle.setReturnDate(Integer.parseInt(days));
+            }
         } else if (vehicleType.equals("Truck")) {
             System.out.println("Creating Truck object...");
             vehicle = new Truck(regnNumber, fuelType, transmissionType)
                     .setSpecialDetails(specialDetails);
             vehicle.setRentalDate(LocalDate.now());
-            vehicle.setReturnDate(Integer.parseInt(days));
+            if (!Login.getActiveUser().isAdmin()) {
+                vehicle.setReturnDate(Integer.parseInt(days));
+            }
         } else {
             JOptionPane.showMessageDialog(frame, "Invalid vehicle type selected!", 
                 "Error", JOptionPane.ERROR_MESSAGE);
             return false;
         }
-
+    
         if (vehicle == null) {
             JOptionPane.showMessageDialog(frame, "Failed to create vehicle object!", 
                 "Error", JOptionPane.ERROR_MESSAGE);
             return false;
         }
 
+        if (Login.getActiveUser().isAdmin()) {
+            try {
+                double rentValue = Double.parseDouble(rent);
+                vehicle.setPerDayRent(rentValue);
+            } catch (NumberFormatException e) {
+                JOptionPane.showMessageDialog(frame, "Please enter a valid rent amount!", 
+                    "Error", JOptionPane.ERROR_MESSAGE);
+                return false;
+            }
+        }
+    
         System.out.println("Vehicle rental request: " + vehicle.getRegnNumber());
         System.out.println("Special details set: " + specialDetails);
-        return rentVehicle();
+
+        return true;
     }
 
     public void resetFields() {
@@ -885,26 +910,11 @@ public class VehicleHandler extends MouseAdapter {
     
     private boolean compareSpecialDetails(String json1, String json2) {
         try {
-            if (vehicleType.equals("Car")) {
-                return json1.contains(specialDetails.get(0).toString()) && 
-                       json2.contains(specialDetails.get(0).toString()) &&
-                       json1.contains(specialDetails.get(1).toString()) &&
-                       json2.contains(specialDetails.get(1).toString());
-            } else if (vehicleType.equals("Bike")) {
-                return json1.contains(specialDetails.get(0).toString()) && 
-                       json2.contains(specialDetails.get(0).toString()) &&
-                       json1.contains(specialDetails.get(1).toString()) &&
-                       json2.contains(specialDetails.get(1).toString()) &&
-                       json1.contains(specialDetails.get(2).toString()) &&
-                       json2.contains(specialDetails.get(2).toString());
-            } else if (vehicleType.equals("Truck")) {
-                return json1.contains(specialDetails.get(0).toString()) && 
-                       json2.contains(specialDetails.get(0).toString()) &&
-                       json1.contains(specialDetails.get(1).toString()) &&
-                       json2.contains(specialDetails.get(1).toString());
-            }
-            
-            return false;
+            Gson gson = new Gson();
+            Map<String, String> details1 = gson.fromJson(json1, new TypeToken<Map<String, String>>() {}.getType());
+            Map<String, String> details2 = gson.fromJson(json2, new TypeToken<Map<String, String>>() {}.getType());
+
+            return details1.equals(details2);
         } catch (Exception e) {
             System.out.println("Error comparing special details: " + e.getMessage());
             return false;
@@ -924,6 +934,11 @@ public class VehicleHandler extends MouseAdapter {
             } else if (mX >= 400 && mX <= 600 && mY >= 500 && mY <= 550) {
                 try {
                     if (finalizeVehicle()) {
+                        if (Login.getActiveUser().isAdmin()) {
+                            storeVehicle();
+                        } else {
+                            rentVehicle();
+                        }
                         window.handleMouseListeners(App.STATE.RENTAL);
                         hideAllComponents();
                         App.setState(App.STATE.RENTAL);
@@ -974,9 +989,13 @@ public class VehicleHandler extends MouseAdapter {
         if (Login.getActiveUser().isAdmin()) {
             countField.setVisible(true);
             rentField.setVisible(true);
+            regnNumberField.setVisible(false);
+            daysField.setVisible(false);
         } else {
             regnNumberField.setVisible(true);
             daysField.setVisible(true);
+            countField.setVisible(false);
+            rentField.setVisible(false);
         }
     }
     

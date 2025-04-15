@@ -468,14 +468,6 @@ public class VehicleHandler extends MouseAdapter {
         regnNumber = regnNumberField.getText();
         days = daysField.getText();
     
-        // Debugging logs
-        System.out.println("Debug: vehicleType = " + vehicleType);
-        System.out.println("Debug: fuelType = " + fuelType);
-        System.out.println("Debug: transmissionType = " + transmissionType);
-        System.out.println("Debug: specialDetails = " + specialDetails);
-        System.out.println("Debug: regnNumber = " + regnNumber);
-        System.out.println("Debug: days = " + days);
-    
         if (vehicleType == null || fuelType == null || transmissionType == null) {
             JOptionPane.showMessageDialog(frame, "Please fill in all base fields!", 
                 "Error", JOptionPane.ERROR_MESSAGE);

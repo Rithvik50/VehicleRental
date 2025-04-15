@@ -1,9 +1,8 @@
 import java.awt.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.sql.*;
 import javax.swing.*;
-
-import javax.swing.JOptionPane;
 
 public class Payment extends MouseAdapter {
     private JFrame frame;
@@ -12,17 +11,6 @@ public class Payment extends MouseAdapter {
     public Payment(JFrame frame, Window window) {
         this.frame = frame;
         this.window = window;
-    }
-
-    @Override
-    public void mouseClicked(MouseEvent e) {
-        int mX = e.getX();
-        int mY = e.getY();
-
-        if (mX >= 600 && mX <= 800 && mY >= 300 && mY <= 350) {
-            window.handleMouseListeners(App.STATE.RENTAL);
-            App.setState(App.STATE.RENTAL);
-        }
     }
 
     public double calculateTotalRent() {
@@ -42,9 +30,29 @@ public class Payment extends MouseAdapter {
         if (coverage >= totalRent) {
             Login.getActiveUser().getInsurance().setCoverage(coverage - totalRent);
             JOptionPane.showMessageDialog(frame, "Vehicles rented successfully!", "Success", JOptionPane.INFORMATION_MESSAGE);
+
+            String sql = "INSERT INTO RentalHistory (user_id, vehicle_id, rental_date, return_date) VALUES (?, ?, ?, ?)";
+            try (Connection conn = DriverManager.getConnection(App.getDatabase()[0], App.getDatabase()[1], App.getDatabase()[2])) {
+                PreparedStatement stmt = conn.prepareStatement(sql);
+                ResultSet rs = stmt.executeQuery();
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+            
             App.setState(App.STATE.RENTAL);
         } else {
             JOptionPane.showMessageDialog(frame, "Insufficient coverage for renting vehicles.", "Error", JOptionPane.ERROR_MESSAGE);
+        }
+    }
+
+    @Override
+    public void mouseClicked(MouseEvent e) {
+        int mX = e.getX();
+        int mY = e.getY();
+
+        if (mX >= 600 && mX <= 800 && mY >= 300 && mY <= 350) {
+            window.handleMouseListeners(App.STATE.RENTAL);
+            App.setState(App.STATE.RENTAL);
         }
     }
 

@@ -45,7 +45,7 @@ public class User {
                      "ORDER BY rh.rental_date DESC";
         
         try (Connection conn = DriverManager.getConnection(App.getDatabase()[0], App.getDatabase()[1], App.getDatabase()[2]);
-             PreparedStatement stmt = conn.prepareStatement(sql)) {
+            PreparedStatement stmt = conn.prepareStatement(sql)) {
             
             stmt.setString(1, userId);
             ResultSet rs = stmt.executeQuery();

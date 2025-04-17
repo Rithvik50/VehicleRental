@@ -27,9 +27,10 @@ public class Payment extends MouseAdapter {
     public void rentVehicles() {
         double coverage = Login.getActiveUser().getInsurance().getCoverage();
         double totalRent = calculateTotalRent();
+        
         if (coverage >= totalRent) {
-            Login.getActiveUser().getInsurance().setCoverage(coverage - totalRent);
-    
+            double newCoverage = coverage - totalRent;
+            
             try (Connection conn = DriverManager.getConnection(App.getDatabase()[0], App.getDatabase()[1], App.getDatabase()[2])) {
                 conn.setAutoCommit(false);
     
@@ -42,17 +43,20 @@ public class Payment extends MouseAdapter {
     
                     String updateInsuranceSql = "UPDATE User SET insurance = ? WHERE username = ?";
                     PreparedStatement updateInsuranceStmt = conn.prepareStatement(updateInsuranceSql);
-                    updateInsuranceStmt.setDouble(1, coverage - totalRent);
+                    updateInsuranceStmt.setDouble(1, newCoverage);
                     updateInsuranceStmt.setString(2, Login.getActiveUser().getUserId());
                     updateInsuranceStmt.executeUpdate();
     
                     conn.commit();
-        
+                    
+                    Login.getActiveUser().getInsurance().setCoverage(newCoverage);
+                    
                     Login.getActiveUser().getRentedVehicles();
                     
                     JOptionPane.showMessageDialog(frame,
                         "Vehicles rented successfully!",
                         "Success", JOptionPane.INFORMATION_MESSAGE);
+                        
                 } catch (SQLException e) {
                     conn.rollback();
                     throw e;
@@ -89,29 +93,28 @@ public class Payment extends MouseAdapter {
     }
 
     public void render(Graphics g) {
+        double insuranceBalance = Login.getActiveUser().getInsurance().getCoverage();
+        double totalCost = calculateTotalRent();
+        
         g.setColor(Color.WHITE);
         g.fillRect(600, 300, 200, 50);
         g.fillRect(600, 400, 200, 50);
-        
-        double insuranceBalance = Login.getActiveUser().getInsurance().getCoverage();
-        double totalCost = calculateTotalRent();
         
         FontMetrics fm = g.getFontMetrics();
         g.setColor(Color.WHITE);
         
         String balanceText = "Insurance Balance: $" + String.format("%.2f", insuranceBalance);
-        String costText = "Total Cost: $" + String.format("%.2f", totalCost);
-        
         int balanceWidth = fm.stringWidth(balanceText);
-        int costWidth = fm.stringWidth(costText);
-        
         int balanceX = 600 + (200 - balanceWidth) / 2;
-        int costX = 600 + (200 - costWidth) / 2;
-        
         g.drawString(balanceText, balanceX, 240);
+        
+        String costText = "Total Cost: $" + String.format("%.2f", totalCost);
+        int costWidth = fm.stringWidth(costText);
+        int costX = 600 + (200 - costWidth) / 2;
         g.drawString(costText, costX, 270);
         
         int textWidth, textX, textY;
+        
         textWidth = fm.stringWidth("Pay");
         textX = 600 + (200 - textWidth) / 2;
         textY = 300 + (50 + fm.getAscent()) / 2;

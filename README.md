@@ -5,12 +5,10 @@ This is a Java console application for managing vehicle rentals. It allows users
 ## Features
 
 - User registration and login
-- Vehicle browsing and filtering
 - Vehicle rental with date selection
 - Rental management (view, complete, cancel)
 - Payment processing
 - Vehicle registration
-- User profile management
 
 ## Vehicle Types
 
@@ -21,7 +19,9 @@ This is a Java console application for managing vehicle rentals. It allows users
 ## How to Run
 
 1. Make sure you have Java JDK installed (version 8 or above)
-2. Run the shell script located inside of src:
+2. Install MySQL Connector/J jar file and place inside lib
+3. Install Gson jar file and place inside lib
+4. Run the shell script located inside of src:
    ```
    sh run.sh
    ```

@@ -29,11 +29,11 @@ This is a Java console application for managing vehicle rentals. It allows users
 ## Sample Workflow
 
 1. Login or register a new account
-2. Browse available vehicles
-3. Rent a vehicle
-4. Enter rental dates and payment information
-5. Manage your rentals
-6. Update your profile
+2. Rent available vehicles
+3. Enter details for desired vehicle
+3. Enter rental dates and registration number
+4. Pay for rented vehicles
+5. If admin, add vehicles
 
 ## System Requirements
 

@@ -23,7 +23,7 @@ public class Cart extends MouseAdapter {
     
     public void render(Graphics g) {
         rentedVehicles = Login.getActiveUser().getRentedVehicles();
-    
+        
         int windowWidth = window.getWidth();
         int windowHeight = window.getHeight();
     
@@ -62,17 +62,19 @@ public class Cart extends MouseAdapter {
     
             int y = offsetY + 160;
             for (Vehicle vehicle : rentedVehicles) {
-                g.drawString("Regn No: " + vehicle.getRegnNumber(), offsetX + 100, y);
-                g.drawString("Fuel: " + vehicle.getFuelType(), offsetX + 100, y + 20);
-                g.drawString("Trans: " + vehicle.getTransmissionType(), offsetX + 100, y + 40);
+                if (!vehicle.isRented()) {
+                    g.drawString("Regn No: " + vehicle.getRegnNumber(), offsetX + 100, y);
+                    g.drawString("Fuel: " + vehicle.getFuelType(), offsetX + 100, y + 20);
+                    g.drawString("Trans: " + vehicle.getTransmissionType(), offsetX + 100, y + 40);
     
-                g.drawString(vehicle.getRentalDate().toString(), offsetX + 400, y + 20);
-                g.drawString(vehicle.getReturnDate().toString(), offsetX + 550, y + 20);
-                g.drawString("$" + vehicle.getPerDayRent(), offsetX + 700, y + 20);
+                    g.drawString(vehicle.getRentalDate().toString(), offsetX + 400, y + 20);
+                    g.drawString(vehicle.getReturnDate().toString(), offsetX + 550, y + 20);
+                    g.drawString("$" + vehicle.getPerDayRent(), offsetX + 700, y + 20);
     
-                g.drawLine(offsetX + 100, y + 60, offsetX + 800, y + 60);
+                    g.drawLine(offsetX + 100, y + 60, offsetX + 800, y + 60);
     
-                y += 80;
+                    y += 80;
+                }
             }
         }
     }

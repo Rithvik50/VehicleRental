@@ -44,11 +44,14 @@ This is a Java console application for managing vehicle rentals. It allows users
 ## Project Structure
 
 - `User.java` - User class for managing user accounts
+- `Insurance.java` - Represents the user's insurance
 - `Vehicle.java` - Base class for all vehicles
 - `Car.java`, `Bike.java`, `Truck.java` - Vehicle type classes
-- `Rental.java` - Rental information
+- `FuelType.java`, `TransmissionType.java` - Basic vehicle detail enumerators
+- `Rental.java` - Rental page to access rental functions
 - `Payment.java` - Payment processing
-- `UserManager.java` - Manages users
-- `VehicleManager.java` - Manages vehicle inventory
-- `RentalManager.java` - Manages rentals
-- `Main.java` - Main application entry point
+- `Cart.java` - View of the cart
+- `VehicleHandler.java` - Handles vehicle inventory
+- `Login.java` - Handles account login and registration
+- `Window.java` - Main view of the rental system
+- `App.java` - Main application entry point

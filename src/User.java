@@ -37,7 +37,7 @@ public class User {
     public List<Vehicle> getRentedVehicles() {
         rentedVehicles.clear();
         
-        String sql = "SELECT rh.vehicle_id, rh.regn_number, rh.rental_date, rh.return_date, " +
+        String sql = "SELECT rh.vehicle_id, rh.regn_number, rh.rental_date, rh.return_date, rh.rented, " +
                      "v.type, v.fuel_type, v.transmission_type, v.special_details, v.rent " +
                      "FROM RentalHistory rh " +
                      "JOIN Vehicle v ON rh.vehicle_id = v.vehicle_id " +
@@ -80,6 +80,10 @@ public class User {
                 vehicle.setPerDayRent(rs.getDouble("rent"));
                 
                 String specialDetailsJson = rs.getString("special_details");
+                
+                boolean isRented = rs.getBoolean("rented");
+                vehicle.setRented(isRented);
+
                 try {
                     if (specialDetailsJson != null && !specialDetailsJson.isEmpty()) {
                         Gson gson = new Gson();

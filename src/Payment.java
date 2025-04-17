@@ -48,6 +48,8 @@ public class Payment extends MouseAdapter {
     
                     conn.commit();
         
+                    Login.getActiveUser().getRentedVehicles();
+                    
                     JOptionPane.showMessageDialog(frame,
                         "Vehicles rented successfully!",
                         "Success", JOptionPane.INFORMATION_MESSAGE);
@@ -64,8 +66,8 @@ public class Payment extends MouseAdapter {
                     "Error", JOptionPane.ERROR_MESSAGE);
             }
     
-            window.handleMouseListeners(App.STATE.RENTAL);
-            App.setState(App.STATE.RENTAL);
+            window.handleMouseListeners(App.STATE.CART);
+            App.setState(App.STATE.CART);
         } else {
             JOptionPane.showMessageDialog(frame,
                 "Insufficient coverage for renting vehicles.",
@@ -81,8 +83,8 @@ public class Payment extends MouseAdapter {
         if (mX >= 600 && mX <= 800 && mY >= 300 && mY <= 350) {
             rentVehicles();
         } else if (mX >= 600 && mX <= 800 && mY >= 400 && mY <= 450) {
-            window.handleMouseListeners(App.STATE.RENTAL);
-            App.setState(App.STATE.RENTAL);
+            window.handleMouseListeners(App.STATE.CART);
+            App.setState(App.STATE.CART);
         }
     }
 

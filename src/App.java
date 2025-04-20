@@ -1,5 +1,5 @@
 public class App {
-    private static final String[] database = {"jdbc:mysql://localhost:3306/VehicleRentalSystem", "root", "Thealamo13"};
+    private static final String[] DATABASE = {"jdbc:mysql://localhost:3306/VehicleRentalSystem", "root", "Thealamo13"};
 
 	enum STATE {
 		LOGIN, RENTAL, VEHICLE, PAYMENT, CART;
@@ -8,7 +8,7 @@ public class App {
     private static STATE state = STATE.LOGIN;
 
     public static String[] getDatabase() {
-        return database;
+        return DATABASE;
     }
 
     public static STATE getState() {

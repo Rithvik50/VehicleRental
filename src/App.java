@@ -5,18 +5,18 @@ public class App {
 		LOGIN, RENTAL, VEHICLE, PAYMENT, CART;
 	}
 
-    private static STATE state = STATE.LOGIN;
+    private static STATE SYSTEM_STATE = STATE.LOGIN;
 
     public static String[] getDatabase() {
         return DATABASE;
     }
 
     public static STATE getState() {
-        return state;
+        return SYSTEM_STATE;
     }
 
     public static void setState(STATE state) {
-        App.state = state;
+        App.SYSTEM_STATE = state;
     }
 
     public static void main(String[] args) {

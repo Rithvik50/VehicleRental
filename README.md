@@ -26,6 +26,11 @@ This is a Java console application for managing vehicle rentals. It allows users
    sh run.sh
    ```
 
+## Database Integration
+
+1. Download the RentalDatabase.sql code from the /database folder
+2. Change the third argument of the DATABASE field in App.java to your localhost server password
+
 ## Sample Workflow
 
 1. Login or register a new account

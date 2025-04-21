@@ -125,16 +125,4 @@ public class User {
     public Insurance getInsurance() {
         return insurance;
     }
-
-    public void displayRentedVehicles() {
-        System.out.println("Vehicles rented by (sorted by rental date):");
-        List<Vehicle> sortedVehicles = getRentedVehicles();
-        if (sortedVehicles.isEmpty()) {
-            System.out.println("No vehicles rented.");
-        } else {
-            for (Vehicle vehicle : sortedVehicles) {
-                vehicle.displayDetails();
-            }
-        }
-    }
 }

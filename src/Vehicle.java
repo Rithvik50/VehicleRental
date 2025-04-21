@@ -89,12 +89,4 @@ public class Vehicle {
     public void setRented(boolean rented) {
         this.rented = rented;
     }
-
-    public void displayDetails() {
-        System.out.println("Registration Number: " + getRegnNumber());
-        System.out.println("Fuel Type: " + getFuelType());
-        System.out.println("Transmission Type: " + getTransmissionType());
-        System.out.println("Per Day Rent: ₹" + getPerDayRent());
-        System.out.println("Rental Date: " + getRentalDate());
-    }
 }

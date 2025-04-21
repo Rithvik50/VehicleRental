@@ -224,9 +224,6 @@ public class VehicleHandler extends MouseAdapter {
         restoreSpecialSelections();
         
         addAllActionListeners();
-        
-        // Debug log to verify the page state
-        System.out.println("Updated special details page for " + vehicleType + ", values: " + specialDetails);
     }
     
     private void restoreSpecialSelections() {
@@ -263,9 +260,6 @@ public class VehicleHandler extends MouseAdapter {
                 }
                 break;
         }
-        
-        // Debug log to verify values are being set
-        System.out.println("Restored special details for " + vehicleType + ": " + specialDetails);
     }
     
     private void removeAllActionListeners() {
@@ -457,9 +451,6 @@ public class VehicleHandler extends MouseAdapter {
                 }
                 break;
         }
-        
-        // Debug log to verify values are being saved
-        System.out.println("Saved special details: " + specialDetails);
     }
     
     public boolean finalizeVehicle() {
@@ -496,7 +487,6 @@ public class VehicleHandler extends MouseAdapter {
         }
     
         if (vehicleType.equals("Car")) {
-            System.out.println("Creating Car object...");
             vehicle = new Car(regnNumber, fuelType, transmissionType)
                     .setSpecialDetails(specialDetails);
             vehicle.setRentalDate(LocalDate.now());
@@ -504,7 +494,6 @@ public class VehicleHandler extends MouseAdapter {
                 vehicle.setReturnDate(Integer.parseInt(days));
             }
         } else if (vehicleType.equals("Bike")) {
-            System.out.println("Creating Bike object...");
             vehicle = new Bike(regnNumber, fuelType, transmissionType)
                     .setSpecialDetails(specialDetails);
             vehicle.setRentalDate(LocalDate.now());
@@ -512,7 +501,6 @@ public class VehicleHandler extends MouseAdapter {
                 vehicle.setReturnDate(Integer.parseInt(days));
             }
         } else if (vehicleType.equals("Truck")) {
-            System.out.println("Creating Truck object...");
             vehicle = new Truck(regnNumber, fuelType, transmissionType)
                     .setSpecialDetails(specialDetails);
             vehicle.setRentalDate(LocalDate.now());
@@ -541,10 +529,6 @@ public class VehicleHandler extends MouseAdapter {
                 return false;
             }
         }
-    
-        System.out.println("Vehicle rental request: " + vehicle.getRegnNumber());
-        System.out.println("Special details set: " + specialDetails);
-
         return true;
     }
 
@@ -580,7 +564,6 @@ public class VehicleHandler extends MouseAdapter {
 
     public boolean rentVehicle() {
         if (vehicle == null) {
-            System.out.println("No vehicle to rent.");
             return false;
         }
         
@@ -593,9 +576,7 @@ public class VehicleHandler extends MouseAdapter {
                 Statement testStmt = conn.createStatement();
                 testStmt.execute("SELECT type FROM Vehicle LIMIT 1");
                 useTypeColumn = true;
-            } catch (SQLException e) {
-                System.out.println("Type column doesn't exist: " + e.getMessage());
-            }
+            } catch (SQLException e) {}
             
             if (useTypeColumn) {
                 checkSql = "SELECT vehicle_id, count, special_details FROM Vehicle " +
@@ -614,25 +595,12 @@ public class VehicleHandler extends MouseAdapter {
             
             ResultSet rs = checkStmt.executeQuery();
             
-            System.out.println("Searching for vehicle:");
-            System.out.println("Type: " + vehicleType);
-            System.out.println("Fuel: " + vehicle.getFuelType());
-            System.out.println("Transmission: " + vehicle.getTransmissionType());
-            
-            System.out.println("Special details we want:");
-            for (int i = 0; i < specialDetails.size(); i++) {
-                System.out.println("Detail " + i + ": " + specialDetails.get(i));
-            }
-            
             boolean foundMatch = false;
             int matchedVehicleId = -1;
             
             while (rs.next()) {
                 int vehicleId = rs.getInt("vehicle_id");
                 String dbSpecialDetails = rs.getString("special_details");
-                
-                System.out.println("\nChecking vehicle ID: " + vehicleId);
-                System.out.println("DB Special details: " + dbSpecialDetails);
                 
                 boolean detailsMatch = false;
                 
@@ -647,9 +615,7 @@ public class VehicleHandler extends MouseAdapter {
                     detailsMatch = dbSpecialDetails.contains(specialDetails.get(0).toString()) && 
                                    dbSpecialDetails.contains(specialDetails.get(1).toString());
                 }
-                
-                System.out.println("Details match: " + detailsMatch);
-                
+                                
                 if (detailsMatch) {
                     foundMatch = true;
                     matchedVehicleId = vehicleId;
@@ -687,19 +653,7 @@ public class VehicleHandler extends MouseAdapter {
                         "Error", JOptionPane.ERROR_MESSAGE);
                     return false;
                 }
-            } else {
-                System.out.println("\nAll vehicles in database:");
-                Statement stmt = conn.createStatement();
-                ResultSet allVehicles = stmt.executeQuery("SELECT * FROM Vehicle");
-                while (allVehicles.next()) {
-                    System.out.println("ID: " + allVehicles.getInt("vehicle_id") + 
-                                      ", Type: " + (useTypeColumn ? allVehicles.getString("type") : "N/A") +
-                                      ", Fuel: " + allVehicles.getString("fuel_type") +
-                                      ", Trans: " + allVehicles.getString("transmission_type") +
-                                      ", Count: " + allVehicles.getInt("count") +
-                                      ", Details: " + allVehicles.getString("special_details"));
-                }
-                
+            } else {                
                 JOptionPane.showMessageDialog(frame, "Sorry, this vehicle is not available in our inventory!", 
                     "Not Available", JOptionPane.ERROR_MESSAGE);
                 return false;
@@ -714,7 +668,6 @@ public class VehicleHandler extends MouseAdapter {
 
     public void storeVehicle() {
         if (vehicle == null) {
-            System.out.println("No vehicle to store.");
             return;
         }
         
@@ -724,9 +677,7 @@ public class VehicleHandler extends MouseAdapter {
                 Statement testStmt = conn.createStatement();
                 testStmt.execute("SELECT type FROM Vehicle LIMIT 1");
                 typeColumnExists = true;
-            } catch (SQLException e) {
-                System.out.println("Type column doesn't exist: " + e.getMessage());
-            }
+            } catch (SQLException e) {}
             
             StringBuilder jsonBuilder = new StringBuilder("{");
             
@@ -908,7 +859,6 @@ public class VehicleHandler extends MouseAdapter {
 
             return details1.equals(details2);
         } catch (Exception e) {
-            System.out.println("Error comparing special details: " + e.getMessage());
             return false;
         }
     }

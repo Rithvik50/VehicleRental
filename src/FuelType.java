@@ -3,7 +3,7 @@ public enum FuelType {
 
     private final String value;
 
-    FuelType(String value) {
+    private FuelType(String value) {
         this.value = value;
     }
 

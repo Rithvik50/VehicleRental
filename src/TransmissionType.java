@@ -3,7 +3,7 @@ public enum TransmissionType {
 
     private final String value;
 
-    TransmissionType(String value) {
+    private TransmissionType(String value) {
         this.value = value;
     }
 

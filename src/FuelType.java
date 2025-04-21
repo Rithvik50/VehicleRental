@@ -1,19 +1,19 @@
 public enum FuelType {
     PETROL("Petrol"), DIESEL("Diesel"), ELECTRIC("Electric");
 
-    private final String value;
+    private final String VALUE;
 
     private FuelType(String value) {
-        this.value = value;
+        this.VALUE = value;
     }
 
     public String getValue() {
-        return value;
+        return VALUE;
     }
 
     public static FuelType fromValue(String value) {
         for (FuelType type : values()) {
-            if (type.value == value) {
+            if (type.VALUE == value) {
                 return type;
             }
         }

@@ -9,7 +9,7 @@ public class Insurance {
         return coverage;
     }
 
-    public void setCoverage(double cost) {
-        coverage -= cost;
+    public void setCoverage(double newCoverage) {
+        coverage = newCoverage;
     }
 }

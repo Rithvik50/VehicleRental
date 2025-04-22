@@ -1,4 +1,4 @@
-# Vehicle Management System
+# Vehicle Rental System
 
 This is a Java console application for managing vehicle rentals. It allows users to register, rent vehicles (cars, bikes, trucks), and manage their rentals.
 
